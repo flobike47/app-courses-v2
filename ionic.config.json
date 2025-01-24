@@ -1,0 +1,7 @@
+{
+  "name": "app-courses-v2",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
