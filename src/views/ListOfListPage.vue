@@ -93,7 +93,7 @@ const handleRefresh = async (event: CustomEvent) => {
 };
 
 const createNewList = () => {
-  console.log('Create new list');
+  eventBus.emit("openCreateListModal")
 };
 </script>
 

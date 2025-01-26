@@ -8,22 +8,31 @@ export class ListService {
     constructor() {
     }
 
-    async getLists() : List[]{
-        try {
-            const { data: lists } = await supabase
-                .from(TABLE_NAME)
-                .select();
+    async getLists(): List[] {
 
-            return lists
-        } catch (error) {
-            return null;
+        const {data: lists, status} = await supabase
+            .from(this.TABLE_NAME)
+            .select()
+
+        switch (status){
+            case 200:
+                if (lists){
+                    return lists
+                }else {
+                    throw new Error("Pas de Liste trouvé")
+                }
+                break
+            case 404:
+                throw new Error("Table not found")
+                break
+            case 401:
+                throw new Error("Appel non autorisé")
+                break
         }
     }
 
     async createList(list: List): boolean {
-        const { status } = await supabase
-            .from(this.TABLE_NAME)
-            .insert(list)
+        const { status } = await supabase.from(this.TABLE_NAME).insert(list)
         if (status == 201){
             return true
         }else {

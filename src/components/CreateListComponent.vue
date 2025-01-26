@@ -1,9 +1,8 @@
 <template>
   <ion-modal
       ref="modal"
-      :trigger="triggerName"
-      :breakpoints="[0, 0.5, 1]"
-      :initial-breakpoint="0.5"
+      :breakpoints="[0, 0.46, 1]"
+      :initial-breakpoint="0.46"
       :handle="false"
 
   >
@@ -37,7 +36,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-button @click="createList" :size="'default'" class="full-width-button create-button">Créer</ion-button>
+          <ion-button @click="createList" :size="'default'" class="full-width-button create-button" :loading="isLoading">
+            <span v-if="!isLoading">Créer</span>
+            <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+          </ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -53,21 +55,15 @@ import {
   IonInput,
   IonButton,
 } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import { ListService } from '@/services/ListService';
 import {List} from "@/models/List";
 import eventBus from "@/services/EventBus";
 
-const props = defineProps({
-  triggerName: {
-    type: String,
-    required: true,
-  },
-});
-
 const service = new ListService()
 
 const modal = ref();
+const isLoading = ref(false);
 
 const listName = ref('');
 const selectedColor = ref('');
@@ -88,29 +84,49 @@ function selectColor(color: string) {
   selectedColor.value = color;
 }
 
-function createList() {
-
-  if (!listName.value){
+async function createList() {
+  if (!listName.value || !selectedColor.value){
+    eventBus.emit('errorToaster','veuillez remplir tous les champs')
     return
+  }else {
+    isLoading.value = true;
   }
   let list = new List(listName.value,selectedColor.value)
 
-  if (service.createList(list)){
-    modal.value.$el.dismiss()
+  const adding = await service.createList(list)
+
+  if (adding){
+    closeModal()
     resetModal()
-    eventBus.emit('listCreated')
+    eventBus.emit('listCreated');
+    
+    isLoading.value = false;
   }
 }
 
 function resetModal() {
   listName.value = ""
   selectedColor.value = ""
+  isLoading.value = false
   generateRandomPastelColors()
 }
 
 onMounted(() => {
   generateRandomPastelColors();
+  eventBus.on("openCreateListModal", () => openModal())
 });
+
+onUnmounted(() => {
+  eventBus.off("openCreateListModal", () => openModal())
+})
+
+function openModal(){
+  modal.value.$el.present()
+}
+
+function closeModal(){
+  modal.value.$el.dismiss()
+}
 </script>
 
 <style scoped>

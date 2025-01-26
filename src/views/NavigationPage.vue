@@ -8,9 +8,9 @@
           <ion-label>Accueil</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="Ajouter" id="open-modal">
+        <ion-tab-button @click="openCreatingListModal">
           <ion-icon aria-hidden="true" :icon="addCircleOutline" />
-          <ion-label>Lieux</ion-label>
+          <ion-label>Ajouter une liste</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="Paramètres" href="/tabs/settings">
@@ -20,18 +20,18 @@
       </ion-tab-bar>
     </ion-tabs>
   </ion-page>
-  <CreateListComponent triggerName="open-modal" />
 </template>
 
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { homeOutline,addCircleOutline,cogOutline } from 'ionicons/icons';
-import CreateListComponent from "@/components/CreateListComponent.vue";
 
 import {onMounted} from "vue";
+import eventBus from "@/services/EventBus";
 
 
 onMounted(() => {
+
   const savedDarkMode = localStorage.getItem('darkMode');
 
   if (savedDarkMode !== null) {
@@ -41,5 +41,9 @@ onMounted(() => {
     document.documentElement.classList.toggle('ion-palette-dark', prefersDark.matches);
   }
 });
+
+function openCreatingListModal(){
+  eventBus.emit("openCreateListModal")
+}
 </script>
 
