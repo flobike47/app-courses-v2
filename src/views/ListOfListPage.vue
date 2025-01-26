@@ -58,9 +58,10 @@ import {
   IonRefresher,
   IonRefresherContent
 } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import { ListService } from '@/services/ListService';
 import { List } from '@/models/List';
+import eventBus from "@/services/EventBus";
 
 const service = new ListService()
 
@@ -69,8 +70,12 @@ const isLoading = ref(true);
 
 onMounted(() => {
   fetchLists()
+  eventBus.on('listCreated', () => fetchLists());
 });
 
+onUnmounted(() => {
+  eventBus.off('listCreated', () => fetchLists());
+});
 const fetchLists = async () => {
   try {
     isLoading.value = true;
