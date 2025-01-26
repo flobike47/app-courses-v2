@@ -4,8 +4,7 @@ export class List {
     public color: string
 
 
-    constructor(id: number, name: string, color: string) {
-        this.id = id;
+    constructor(name: string, color: string) {
         this.name = name;
         this.color = color;
     }

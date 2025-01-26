@@ -12,6 +12,7 @@ http://ionicframework.com/docs/theming/ */
 .ion-palette-dark.md {
     --ion-item-background: #46505a;
     --ion-card-background: #46505a;
+    --ion-modal-background: #46505a;
     --ion-card-color: #ffffff;
     --ion-background-color: #708090;
     --ion-toolbar-background: #46505a;

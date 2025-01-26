@@ -8,9 +8,9 @@
           <ion-label>Accueil</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="Ajouter">
+        <ion-tab-button @click="openCreatingListModal">
           <ion-icon aria-hidden="true" :icon="addCircleOutline" />
-          <ion-label>Lieux</ion-label>
+          <ion-label>Ajouter une liste</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="Paramètres" href="/tabs/settings">
@@ -27,21 +27,23 @@ import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouter
 import { homeOutline,addCircleOutline,cogOutline } from 'ionicons/icons';
 
 import {onMounted} from "vue";
+import eventBus from "@/services/EventBus";
 
 
 onMounted(() => {
-  // Check if there's a saved preference
+
   const savedDarkMode = localStorage.getItem('darkMode');
 
   if (savedDarkMode !== null) {
-    // Use saved preference if it exists
     const isDark = JSON.parse(savedDarkMode);
     document.documentElement.classList.toggle('ion-palette-dark', isDark);
   } else {
-    // Otherwise, use system preference
     document.documentElement.classList.toggle('ion-palette-dark', prefersDark.matches);
   }
 });
 
-
+function openCreatingListModal(){
+  eventBus.emit("openCreateListModal")
+}
 </script>
+

@@ -1,12 +1,12 @@
 <template>
   <ion-app>
     <ion-router-outlet />
+    <CreateListComponent />
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { IonApp, IonRouterOutlet } from '@ionic/vue';
-import { supabase } from '@/config/supabaseClientConfig'
+import CreateListComponent from "@/components/CreateListComponent.vue";
 
 </script>
