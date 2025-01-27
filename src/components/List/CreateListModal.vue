@@ -64,6 +64,7 @@ import {
   IonItem,
   IonInput,
   IonButton,
+  IonSpinner
 } from '@ionic/vue';
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { ListService } from '@/services/ListService';

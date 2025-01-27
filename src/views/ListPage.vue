@@ -54,6 +54,7 @@ import { List } from '@/models/List';
 import eventBus from "@/services/EventBus";
 import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
+import router from "@/router";
 
 const service = new ListService()
 
@@ -79,6 +80,9 @@ const fetchLists = async () => {
   }
 };
 
+const navigateToArticles = () => {
+  router.push('/articles',{});
+};
 const handleRefresh = async (event: CustomEvent) => {
   await fetchLists();
   (event.target as any).complete();

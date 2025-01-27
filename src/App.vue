@@ -2,7 +2,7 @@
   <ion-app>
     <ion-router-outlet />
     <CreateListComponent />
-    <toaster-component />
+    <ToasterComponent />
     <AlertComponent />
   </ion-app>
 </template>

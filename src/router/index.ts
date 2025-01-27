@@ -17,19 +17,29 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'home',
-        component: () => import('@/views/ListOfListPage.vue')
+        component: () => import('@/views/ListPage.vue'),
       },
       {
         path: 'settings',
         component: () => import('@/views/SettingsPage.vue')
-      }
+      },
+      {
+        path: '/articles',
+        component: () => import('@/views/ArticlePage.vue'),
+      },
     ]
-  }
+  },
+
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach(async (to, from) => {
+  const canAccess = true
+  if (!canAccess) return '/login'
 })
 
 export default router
