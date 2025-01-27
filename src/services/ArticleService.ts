@@ -24,6 +24,7 @@ export class ArticleService{
                 label(id,name)
             `)
             .eq('list', listId)
+            .order("label")
 
         switch (status){
             case 200:

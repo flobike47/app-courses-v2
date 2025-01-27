@@ -1,5 +1,5 @@
 <template>
-  <ion-card class="ion-margin-bottom grid-item">
+  <ion-card class="ion-margin-bottom grid-item" :class="{opacity: article.deleted }">
     <ion-card-header>
       <ion-card-title style="font-size: 18pt">{{ article.name }} - <small>{{ article.unity_value }} {{ article.unity.name }}</small></ion-card-title>
       <ion-card-subtitle></ion-card-subtitle>
@@ -36,5 +36,9 @@ ion-card{
 
 ion-card-content{
   padding-bottom: 5px;
+}
+
+.opacity{
+  opacity: 0.33;
 }
 </style>

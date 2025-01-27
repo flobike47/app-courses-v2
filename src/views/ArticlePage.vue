@@ -7,6 +7,11 @@
         </ion-buttons>
         <ion-title>{{ listName }}</ion-title>
         <ion-progress-bar type="indeterminate" v-if="isLoading"></ion-progress-bar>
+        <ion-buttons slot="end">
+          <ion-button id="trigger-button" @click="presentPopover($event)">
+            <ion-icon slot="icon-only" :icon="ellipsisVertical"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -17,9 +22,9 @@
             <ion-card-title>Articles:</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <div v-if="articles && articles.length">
+            <div v-if="filteredArticles && filteredArticles.length">
               <ArticleCard
-                  v-for="article in articles"
+                  v-for="article in filteredArticles"
                   :key="article.id"
                   :article="article"
               />
@@ -28,7 +33,7 @@
               <ion-card class="not-found">
                 <ion-card-content class="ion-text-center">
                   <p>Aucun article trouvée</p>
-                  <ion-button @click="openAddingModal" expand="block" >
+                  <ion-button @click="openAddingModal" expand="block">
                     Ajouter un article
                   </ion-button>
                 </ion-card-content>
@@ -44,6 +49,7 @@
 <script setup lang="ts">
 import {
   IonPage,
+  IonIcon,
   IonHeader,
   IonToolbar,
   IonButtons,
@@ -54,31 +60,64 @@ import {
   IonCard,
   IonCardTitle,
   IonCardHeader,
-  IonCardContent, IonButton
+  IonCardContent,
+  IonButton,
+  popoverController
 } from "@ionic/vue";
 import {useRoute} from "vue-router";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref, watch} from "vue";
 import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
 import eventBus from "@/services/EventBus";
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
+import {ellipsisVertical} from "ionicons/icons";
+import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 
 const route = useRoute();
 const service = new ArticleService()
 const isLoading = ref(false);
 
 let listId, listName;
-const articles = ref()
+const allArticles = ref([])
+const filteredArticles = ref()
 
-function openAddingModal(){
-  eventBus.emit(ArticleCommands.OPEN_CREATION,listId)
+let showDeleted = ref(false)
+
+
+function openAddingModal() {
+  eventBus.emit(ArticleCommands.OPEN_CREATION, listId)
+}
+
+async function presentPopover(e: Event) {
+  const popover = await popoverController.create({
+    component: PopoverComponent,
+    componentProps: {
+      showDeleted: showDeleted.value,
+      onToggle: (value) => applyFilterArticles(value),
+    },
+    event: e,
+    cssClass: 'my-popover',
+    translucent: true,
+    keepContentsMounted: true,
+  });
+  await popover.present();
+  await popover.onDidDismiss();
+}
+
+function applyFilterArticles(displayDeleted: boolean) {
+
+  showDeleted.value = displayDeleted
+
+  filteredArticles.value = displayDeleted
+      ? allArticles.value
+      : allArticles.value.filter(article => !article.deleted)
 }
 
 onMounted(() => {
   listId = route.query.listId
   listName = route.query.listName?.toString().toUpperCase()
 
-  fetchArticles()
+  fetchArticles(showDeleted.value)
 
   eventBus.on(ArticleCommands.RELOAD(listId), fetchArticles)
 })
@@ -90,7 +129,10 @@ onUnmounted(() => {
 const fetchArticles = async () => {
   try {
     isLoading.value = true;
-    articles.value = await service.getListArticle(listId);
+    allArticles.value = await service.getListArticle(listId);
+
+    applyFilterArticles()
+
   } catch (error) {
     console.error(error);
   } finally {
@@ -105,10 +147,17 @@ ion-card-content {
   padding: 0 0 20px 0;
 }
 
-.not-found{
+.not-found {
   background-color: var(--ion-background-color);
 }
-.ion-text-center{
+
+.ion-text-center {
   margin: 5px 10px 0 10px;
+}
+
+.my-popover {
+  --width: 250px;
+  --height: auto;
+  /* Evitez: width: 0; height: 0; opacity: 0; display: none; */
 }
 </style>
