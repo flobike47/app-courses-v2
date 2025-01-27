@@ -13,21 +13,11 @@
 
       <div v-if="!isLoading">
         <div v-if="lists && lists.length" class="ion-padding">
-          <ion-card
+          <ListCard
               v-for="list in lists"
               :key="list.id"
-              class="ion-margin-bottom grid-item"
-          >
-            <div class="list-header">
-              <div
-                  class="color-pastille"
-                  :style="{ 'background-color': list.color }"
-              ></div>
-              <ion-card-content class="ion-text-center">
-                <h2 class="ion-text-wrap">{{ list.name }}</h2>
-              </ion-card-content>
-            </div>
-          </ion-card>
+              :list="list"
+          />
         </div>
         <div v-else class="ion-padding">
           <ion-card>
@@ -62,6 +52,7 @@ import {onMounted, onUnmounted, ref} from 'vue';
 import { ListService } from '@/services/ListService';
 import { List } from '@/models/List';
 import eventBus from "@/services/EventBus";
+import ListCard from "@/components/List/ListCard.vue";
 
 const service = new ListService()
 

@@ -1,5 +1,5 @@
 export class List {
-    private id: number;
+    public id: number;
     public name: string;
     public color: string
 

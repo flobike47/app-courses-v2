@@ -40,4 +40,19 @@ export class ListService {
         }
 
     }
+
+    async deleteList(id: number): boolean {
+        const { error,status } = await supabase
+            .from('List')
+            .delete()
+            .eq('id', id)
+
+        if (status == 204){
+            return true
+        }else {
+            console.log(error)
+        }
+    }
+
+
 }
