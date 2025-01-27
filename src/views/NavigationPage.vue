@@ -3,7 +3,7 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="Accueil" href="/tabs/home">
+        <ion-tab-button @click="hapticsImpactLight" tab="Accueil" href="/tabs/home">
           <ion-icon aria-hidden="true" :icon="homeOutline" />
           <ion-label>Accueil</ion-label>
         </ion-tab-button>
@@ -13,7 +13,7 @@
           <ion-label>Ajouter une liste</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="Paramètres" href="/tabs/settings">
+        <ion-tab-button @click="hapticsImpactLight" tab="Paramètres" href="/tabs/settings">
           <ion-icon aria-hidden="true" :icon="cogOutline" />
           <ion-label>Paramètres</ion-label>
         </ion-tab-button>
@@ -25,6 +25,8 @@
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { homeOutline,addCircleOutline,cogOutline } from 'ionicons/icons';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+
 
 import {onMounted} from "vue";
 import eventBus from "@/services/EventBus";
@@ -43,7 +45,12 @@ onMounted(() => {
 });
 
 function openCreatingListModal(){
+  hapticsImpactLight()
   eventBus.emit("openCreateListModal")
 }
+
+const hapticsImpactLight = async () => {
+  await Haptics.impact({ style: ImpactStyle.Light });
+};
 </script>
 

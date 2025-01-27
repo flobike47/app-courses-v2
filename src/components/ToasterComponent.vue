@@ -2,8 +2,10 @@
 import {toastController} from "@ionic/vue";
 import {onMounted, onUnmounted} from "vue";
 import eventBus from "@/services/EventBus";
+import {Haptics, NotificationType} from "@capacitor/haptics";
 
 function showError(message: string) {
+  Haptics.impact({ style: NotificationType.Error });
   toastController.create({
     message: message,
     duration: 3000,
