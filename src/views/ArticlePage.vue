@@ -28,7 +28,7 @@
               <ion-card class="not-found">
                 <ion-card-content class="ion-text-center">
                   <p>Aucun article trouvée</p>
-                  <ion-button expand="block" >
+                  <ion-button @click="openAddingModal" expand="block" >
                     Ajouter un article
                   </ion-button>
                 </ion-card-content>
@@ -57,9 +57,11 @@ import {
   IonCardContent, IonButton
 } from "@ionic/vue";
 import {useRoute} from "vue-router";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
+import eventBus from "@/services/EventBus";
+import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 
 const route = useRoute();
 const service = new ArticleService()
@@ -68,11 +70,21 @@ const isLoading = ref(false);
 let listId, listName;
 const articles = ref()
 
+function openAddingModal(){
+  eventBus.emit(ArticleCommands.OPEN_CREATION,listId)
+}
+
 onMounted(() => {
   listId = route.query.listId
   listName = route.query.listName?.toString().toUpperCase()
 
   fetchArticles()
+
+  eventBus.on(ArticleCommands.RELOAD(listId), fetchArticles)
+})
+
+onUnmounted(() => {
+  eventBus.off(ArticleCommands.RELOAD(listId))
 })
 
 const fetchArticles = async () => {

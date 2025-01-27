@@ -30,6 +30,7 @@ import {onMounted, ref, watch} from 'vue';
 import eventBus from '@/services/EventBus';
 import { ListCommands } from '@/models/eventCommand/ListCommands';
 import { useRoute } from 'vue-router';
+import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 
 
 const route = useRoute();
@@ -49,6 +50,12 @@ onMounted(() => {
 function openCreatingListModal() {
   hapticsImpactLight();
   eventBus.emit(ListCommands.OPEN_CREATION);
+}
+
+function openCreatingArticleModal() {
+  hapticsImpactLight();
+  const listId = route.query.listId
+  eventBus.emit(ArticleCommands.OPEN_CREATION,listId);
 }
 
 const hapticsImpactLight = async () => {
@@ -79,7 +86,7 @@ function handleDynamicAction() {
       openCreatingListModal();
       break;
     case '/articles':
-      console.log("article")
+      openCreatingArticleModal();
       break;
     default:
       openCreatingListModal();

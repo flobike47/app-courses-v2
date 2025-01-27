@@ -41,4 +41,21 @@ export class ArticleService{
                 break
         }
     }
+
+
+    async createArticle(name: string, unity: number, unity_value: number, list: number, label: number) {
+        const { error } = await supabase
+            .from('Article')
+            .insert([{
+                name: name,
+                unity: unity,
+                unity_value: unity_value,
+                list: list,
+                label: label
+            }])
+            .select()
+
+        if (error) throw error
+        else return true
+    }
 }
