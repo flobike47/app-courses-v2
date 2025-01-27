@@ -20,10 +20,6 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/ListOfListPage.vue')
       },
       {
-        path: 'places',
-        component: () => import('@/views/AddListPage.vue')
-      },
-      {
         path: 'settings',
         component: () => import('@/views/SettingsPage.vue')
       }

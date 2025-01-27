@@ -15,7 +15,7 @@
       </ion-item>
 
       <ion-item-options>
-        <ion-item-option color="danger" @click="deleteItemAlert()">Delete</ion-item-option>
+        <ion-item-option color="danger" @click="deleteItemAlert()">Supprimer</ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-card>
@@ -27,6 +27,9 @@ import {IonCard, IonCardContent, IonItem, IonItemOption, IonItemOptions, IonItem
 import {List} from '@/models/List';
 import eventBus from "@/services/EventBus";
 import {ListService} from "@/services/ListService";
+import {AlertInstruction} from "@/models/AlertInstruction";
+import {ListCommands} from "@/models/eventCommand/ListCommands";
+import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 
 const props = defineProps<{
   list: List
@@ -35,17 +38,21 @@ const props = defineProps<{
 const service = new ListService()
 
 async function deleteItemAlert(){
-  eventBus.emit("deletionConfirmation",["Es-tu sur de vouloir supprimer cette liste ?",`deleteList=${props.list.id}`])
+  const deletionInstruction = new AlertInstruction(
+      "Es-tu sur de vouloir supprimer cette liste ?",
+      ListCommands.DELETE(props.list.id))
 
-  eventBus.on(`deleteList=${props.list.id}`, deleteItem)
+  eventBus.emit(AlertCommands.DELETION,deletionInstruction)
+
+  eventBus.on(ListCommands.DELETE(props.list.id), deleteItem)
 }
 
 
 async function deleteItem(toDelete: boolean){
-  eventBus.off(`deleteList=${props.list.id}`)
+  eventBus.off(ListCommands.DELETE(props.list.id))
   if (toDelete){
     await service.deleteList(props.list.id)
-    eventBus.emit("listCreated")
+    eventBus.emit(ListCommands.RELOAD)
   }
 }
 </script>

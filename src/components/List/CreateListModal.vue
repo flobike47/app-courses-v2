@@ -70,6 +70,8 @@ import { ListService } from '@/services/ListService';
 import { List } from "@/models/List";
 import eventBus from "@/services/EventBus";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import {ListCommands} from "@/models/eventCommand/ListCommands";
+import {ToasterCommands} from "@/models/eventCommand/ToasterCommands";
 
 const service = new ListService();
 const modal = ref();
@@ -103,7 +105,7 @@ function selectColor(color: string) {
 async function createList() {
   if (!isFormValid.value) {
     await Haptics.impact({ style: ImpactStyle.Light });
-    eventBus.emit('errorToaster', 'veuillez remplir tous les champs');
+    eventBus.emit(ToasterCommands.ERROR, 'veuillez remplir tous les champs');
     return;
   }
 
@@ -115,7 +117,7 @@ async function createList() {
   if (adding) {
     closeModal();
     resetModal();
-    eventBus.emit('listCreated');
+    eventBus.emit(ListCommands.RELOAD);
   }
 
   isLoading.value = false;
@@ -132,11 +134,11 @@ function resetModal() {
 
 onMounted(() => {
   generateRandomPastelColors();
-  eventBus.on("openCreateListModal", () => openModal());
+  eventBus.on(ListCommands.OPEN_CREATION, () => openModal());
 });
 
 onUnmounted(() => {
-  eventBus.off("openCreateListModal", () => openModal());
+  eventBus.off(ListCommands.OPEN_CREATION);
 });
 
 function openModal() {

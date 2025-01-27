@@ -3,6 +3,7 @@ import {toastController} from "@ionic/vue";
 import {onMounted, onUnmounted} from "vue";
 import eventBus from "@/services/EventBus";
 import {Haptics, NotificationType} from "@capacitor/haptics";
+import {ToasterCommands} from "@/models/eventCommand/ToasterCommands";
 
 function showError(message: string) {
   Haptics.impact({ style: NotificationType.Error });
@@ -15,10 +16,10 @@ function showError(message: string) {
 }
 
 onMounted(() => {
-  eventBus.on('errorToaster', showError);
+  eventBus.on(ToasterCommands.ERROR, showError);
 });
 
 onUnmounted(() => {
-  eventBus.off('errorToaster', showError);
+  eventBus.off(ToasterCommands.ERROR);
 });
 </script>

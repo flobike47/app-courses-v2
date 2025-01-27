@@ -30,6 +30,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import {onMounted} from "vue";
 import eventBus from "@/services/EventBus";
+import {ListCommands} from "@/models/eventCommand/ListCommands";
 
 
 onMounted(() => {
@@ -46,7 +47,7 @@ onMounted(() => {
 
 function openCreatingListModal(){
   hapticsImpactLight()
-  eventBus.emit("openCreateListModal")
+  eventBus.emit(ListCommands.OPEN_CREATION)
 }
 
 const hapticsImpactLight = async () => {

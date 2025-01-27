@@ -53,6 +53,7 @@ import { ListService } from '@/services/ListService';
 import { List } from '@/models/List';
 import eventBus from "@/services/EventBus";
 import ListCard from "@/components/List/ListCard.vue";
+import {ListCommands} from "@/models/eventCommand/ListCommands";
 
 const service = new ListService()
 
@@ -61,11 +62,11 @@ const isLoading = ref(true);
 
 onMounted(() => {
   fetchLists()
-  eventBus.on('listCreated', () => fetchLists());
+  eventBus.on(ListCommands.RELOAD, () => fetchLists());
 });
 
 onUnmounted(() => {
-  eventBus.off('listCreated', () => fetchLists());
+  eventBus.off(ListCommands.RELOAD, () => fetchLists());
 });
 const fetchLists = async () => {
   try {
@@ -84,7 +85,7 @@ const handleRefresh = async (event: CustomEvent) => {
 };
 
 const createNewList = () => {
-  eventBus.emit("openCreateListModal")
+  eventBus.emit(ListCommands.OPEN_CREATION)
 };
 </script>
 
