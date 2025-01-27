@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import {IonCard, IonCardContent, IonItem, IonItemOption, IonItemOptions, IonItemSliding, IonNavLink} from '@ionic/vue';
+import {IonCard, IonCardContent, IonItem, IonItemOption, IonItemOptions, IonItemSliding} from '@ionic/vue';
 import {List} from '@/models/List';
 import eventBus from "@/services/EventBus";
 import {ListService} from "@/services/ListService";

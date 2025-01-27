@@ -4,14 +4,15 @@ import {Label} from "@/models/Label";
 export class Article {
     public id: number;
     public name: string;
-    public created_at: string
+    public created_at: Date
     public unity: Unity
     public unity_value: number
     public list: number
     public added_by: string
     public deleted: boolean
-    public deleted_at: string
+    public deleted_at: Date
     public label: Label
+    public selected: boolean
 
 
     constructor(name: string, unity: Unity, unity_value: number, list: number, added_by: string, label: Label) {

@@ -24,6 +24,7 @@ export class ArticleService{
                 label(id,name)
             `)
             .eq('list', listId)
+            .order("label")
 
         switch (status){
             case 200:
@@ -54,6 +55,16 @@ export class ArticleService{
                 label: label
             }])
             .select()
+
+        if (error) throw error
+        else return true
+    }
+
+    async deleteArticles(ids: number[]) {
+        const { error } = await supabase
+            .from('Article')
+            .delete()
+            .in('id', ids)
 
         if (error) throw error
         else return true
