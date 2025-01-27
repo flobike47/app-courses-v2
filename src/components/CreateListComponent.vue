@@ -4,44 +4,54 @@
       :breakpoints="[0, 0.46, 1]"
       :initial-breakpoint="0.46"
       :handle="false"
-
   >
     <ion-content>
-      <ion-list>
-        <ion-item>
-          <ion-input
-              label="Nom de la liste:"
-              v-model="listName"
-              placeholder="Entrez le nom de la liste"
-          />
-        </ion-item>
+      <form @submit.prevent="createList">
+        <ion-list>
+          <ion-item>
+            <ion-input
+                label="Nom de la liste:"
+                v-model="formData.listName"
+                placeholder="Entrez le nom de la liste"
+                required
+            />
+          </ion-item>
 
-        <ion-item>
-          <div>
-            <h4>Choisissez une couleur :</h4>
-            <ion-button @click="generateRandomPastelColors" class="regen-button">Régénérer les couleurs</ion-button>
-            <div class="color-picker">
-              <div class="color-picker-row">
-                <span
-                    v-for="(color, index) in pastelColors"
-                    :key="index"
-                    :style="{ backgroundColor: color }"
-                    class="color-circle"
-                    :class="{ selected: selectedColor === color }"
-                    @click="selectColor(color)"
-                ></span>
+          <ion-item>
+            <div>
+              <h4>Choisissez une couleur :</h4>
+              <ion-button @click="generateRandomPastelColors" class="regen-button">
+                Régénérer les couleurs
+              </ion-button>
+              <div class="color-picker">
+                <div class="color-picker-row">
+                 <span
+                     v-for="(color, index) in pastelColors"
+                     :key="index"
+                     :style="{ backgroundColor: color }"
+                     class="color-circle"
+                     :class="{ selected: formData.selectedColor === color }"
+                     @click="selectColor(color)"
+                 ></span>
+                </div>
               </div>
+              <input type="hidden" :value="formData.selectedColor" required />
             </div>
-          </div>
-        </ion-item>
+          </ion-item>
 
-        <ion-item>
-          <ion-button @click="createList" :size="'default'" class="full-width-button create-button" :loading="isLoading">
-            <span v-if="!isLoading">Créer</span>
-            <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-          </ion-button>
-        </ion-item>
-      </ion-list>
+          <ion-item>
+            <ion-button
+                type="submit"
+                :size="'default'"
+                class="full-width-button create-button"
+                :disabled="isLoading || !isFormValid"
+            >
+              <span v-if="!isLoading">Créer</span>
+              <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </form>
     </ion-content>
   </ion-modal>
 </template>
@@ -55,19 +65,25 @@ import {
   IonInput,
   IonButton,
 } from '@ionic/vue';
-import {onMounted, onUnmounted, ref} from 'vue';
+import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { ListService } from '@/services/ListService';
-import {List} from "@/models/List";
+import { List } from "@/models/List";
 import eventBus from "@/services/EventBus";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
-const service = new ListService()
-
+const service = new ListService();
 const modal = ref();
 const isLoading = ref(false);
-
-const listName = ref('');
-const selectedColor = ref('');
 const pastelColors = ref<string[]>([]);
+
+const formData = ref({
+  listName: '',
+  selectedColor: ''
+});
+
+const isFormValid = computed(() => {
+  return formData.value.listName && formData.value.selectedColor;
+});
 
 function generateRandomPastelColors() {
   const newPastelColors = [];
@@ -81,51 +97,54 @@ function generateRandomPastelColors() {
 }
 
 function selectColor(color: string) {
-  selectedColor.value = color;
+  formData.value.selectedColor = color;
 }
 
 async function createList() {
-  if (!listName.value || !selectedColor.value){
-    eventBus.emit('errorToaster','veuillez remplir tous les champs')
-    return
-  }else {
-    isLoading.value = true;
+  if (!isFormValid.value) {
+    await Haptics.impact({ style: ImpactStyle.Light });
+    eventBus.emit('errorToaster', 'veuillez remplir tous les champs');
+    return;
   }
-  let list = new List(listName.value,selectedColor.value)
 
-  const adding = await service.createList(list)
+  isLoading.value = true;
+  let list = new List(formData.value.listName, formData.value.selectedColor);
 
-  if (adding){
-    closeModal()
-    resetModal()
+  const adding = await service.createList(list);
+
+  if (adding) {
+    closeModal();
+    resetModal();
     eventBus.emit('listCreated');
-    
-    isLoading.value = false;
   }
+
+  isLoading.value = false;
 }
 
 function resetModal() {
-  listName.value = ""
-  selectedColor.value = ""
-  isLoading.value = false
-  generateRandomPastelColors()
+  formData.value = {
+    listName: '',
+    selectedColor: ''
+  };
+  isLoading.value = false;
+  generateRandomPastelColors();
 }
 
 onMounted(() => {
   generateRandomPastelColors();
-  eventBus.on("openCreateListModal", () => openModal())
+  eventBus.on("openCreateListModal", () => openModal());
 });
 
 onUnmounted(() => {
-  eventBus.off("openCreateListModal", () => openModal())
-})
+  eventBus.off("openCreateListModal", () => openModal());
+});
 
-function openModal(){
-  modal.value.$el.present()
+function openModal() {
+  modal.value.$el.present();
 }
 
-function closeModal(){
-  modal.value.$el.dismiss()
+function closeModal() {
+  modal.value.$el.dismiss();
 }
 </script>
 
