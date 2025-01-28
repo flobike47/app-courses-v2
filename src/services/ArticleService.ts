@@ -66,7 +66,8 @@ export class ArticleService{
     async deleteArticles(ids: number[]) {
         const { error } = await supabase
             .from('Article')
-            .delete()
+            .update({deleted: true, deleted_at: new Date().toISOString()})
+            //géré dans le back pour être vraiment supprimé après 24h
             .in('id', ids)
 
         if (error) throw error
