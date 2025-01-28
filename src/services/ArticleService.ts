@@ -45,6 +45,8 @@ export class ArticleService{
 
 
     async createArticle(name: string, unity: number, unity_value: number, list: number, label: number) {
+        const user = await supabase.auth.getUser()
+
         const { error } = await supabase
             .from('Article')
             .insert([{
@@ -52,7 +54,8 @@ export class ArticleService{
                 unity: unity,
                 unity_value: unity_value,
                 list: list,
-                label: label
+                label: label,
+                added_by: user.data.user?.id
             }])
             .select()
 
