@@ -43,8 +43,6 @@ onMounted(async () => {
 
   const savedDarkMode = await storageService.getDarkMode()
 
-  console.log(savedDarkMode)
-
   if (savedDarkMode !== null) {
     const isDark = JSON.parse(savedDarkMode);
     document.documentElement.classList.toggle('ion-palette-dark', isDark);

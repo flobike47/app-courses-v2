@@ -16,6 +16,9 @@
             Mode sombre
           </ion-toggle>
         </ion-item>
+        <ion-item>
+          <ion-button class="full-width-button" size="default" @click="signOut">Déconnexion</ion-button>
+        </ion-item>
       </ion-list>
     </ion-content>
   </ion-page>
@@ -33,8 +36,10 @@ import {
   IonToggle,
   ToggleCustomEvent
 } from '@ionic/vue';
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import {AppStorageService} from "@/services/AppStorageService";
+import router from "@/router";
+import {supabase} from "@/config/supabaseClientConfig";
 
 const paletteToggle = ref(false);
 const storageService = AppStorageService.getInstance();
@@ -52,8 +57,18 @@ const initializeDarkPalette = (isDark: boolean) => {
   toggleDarkPalette(isDark);
 };
 
+async function signOut() {
+  const {error} = await supabase.auth.signOut();
+  if (error) {
+    console.error('Erreur lors de la déconnexion:', error);
+    supabase.auth.setSession(null);
+  }
+  router.push('/login');
+
+}
+
 onMounted(async () => {
-  const savedDarkMode =  await storageService.getDarkMode()
+  const savedDarkMode = await storageService.getDarkMode()
 
   if (savedDarkMode !== null) {
     const isDark = JSON.parse(savedDarkMode);
@@ -73,3 +88,11 @@ const toggleChange = (event: ToggleCustomEvent) => {
   toggleDarkPalette(event.detail.checked);
 };
 </script>
+
+<style scoped>
+.full-width-button {
+  margin: 15px;
+  width: 100%;
+}
+
+</style>
