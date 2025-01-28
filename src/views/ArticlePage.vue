@@ -85,15 +85,16 @@ import { ArticleCommands } from "@/models/eventCommand/ArticleCommands";
 import { ellipsisVertical, trash } from "ionicons/icons";
 import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 import {Article} from "@/models/Article";
+import {AppStorageService} from "@/services/AppStorageService";
 
 const route = useRoute();
 const service = new ArticleService();
+const storageService = AppStorageService.getInstance()
+
 const isLoading = ref(false);
 
 const listId = route.query.listId;
 const listName = route.query.listName?.toString().toUpperCase();
-
-const UNIQUE_STORAGE_KEY = 'selectedArticles-'+listId
 
 const allArticles = ref<Article[]>([]);
 const filteredArticles = ref<Article[]>([]);
@@ -142,7 +143,7 @@ const fetchArticles = async () => {
     isLoading.value = true;
     allArticles.value = await service.getListArticle(listId);
 
-    const selectedIds = JSON.parse(localStorage.getItem(UNIQUE_STORAGE_KEY) || '[]');
+    const selectedIds = await storageService.getSavedArticles(listId) ?? []
 
     allArticles.value = allArticles.value.map(article => ({
       ...article,
@@ -167,7 +168,7 @@ const handleArticleSelection = (article: Article) => {
   }
 
   const selectedIds = selectedArticles.value.map(a => a.id);
-  localStorage.setItem(UNIQUE_STORAGE_KEY, JSON.stringify(selectedIds));
+  storageService.setSavedArticles(listId,selectedIds)
 };
 
 const deleteSelectedArticles = async () => {
@@ -181,7 +182,7 @@ const deleteSelectedArticles = async () => {
     await fetchArticles();
 
     selectedArticles.value = [];
-    localStorage.removeItem(UNIQUE_STORAGE_KEY);
+    await storageService.removeSavedArticles(listId)
   } catch (error) {
     console.error("Erreur lors de la suppression des articles:", error);
   } finally {

@@ -31,19 +31,25 @@ import eventBus from '@/services/EventBus';
 import { ListCommands } from '@/models/eventCommand/ListCommands';
 import { useRoute } from 'vue-router';
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
+import {AppStorageService} from "@/services/AppStorageService";
 
 
 const route = useRoute();
 const currentLabel = ref('Ajouter une liste');
+const storageService = AppStorageService.getInstance();
 
-onMounted(() => {
-  const savedDarkMode = localStorage.getItem('darkMode');
+
+onMounted(async () => {
+
+  const savedDarkMode = await storageService.getDarkMode()
+
+  console.log(savedDarkMode)
 
   if (savedDarkMode !== null) {
     const isDark = JSON.parse(savedDarkMode);
     document.documentElement.classList.toggle('ion-palette-dark', isDark);
   } else {
-    document.documentElement.classList.toggle('ion-palette-dark', prefersDark.matches);
+    document.documentElement.classList.toggle('ion-palette-dark', false);
   }
 });
 
