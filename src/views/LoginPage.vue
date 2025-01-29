@@ -23,6 +23,12 @@
             <span v-if="!isLoading">Se connecter</span>
             <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
           </ion-button>
+          <ion-button class="google-login-button" expand="block" @click="signInWithGoogle">
+
+            <ion-icon v-if="!isGoogleLoading" slot="start" :icon="logoGoogle" />
+            <span v-if="!isGoogleLoading">Se connecter avec Google</span>
+            <ion-spinner v-if="isGoogleLoading" name="crescent"></ion-spinner>
+          </ion-button>
           <ion-button class="register-button" expand="block" fill="clear" router-link="/register">
             Pas encore de compte ? S'inscrire
           </ion-button>
@@ -42,11 +48,15 @@ import {
   IonSpinner,
   IonToolbar,
   IonHeader,
-  IonTitle
+  IonTitle,
+  IonIcon
 } from '@ionic/vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {UserService} from "@/services/UserService";
+import {logoGoogle} from "ionicons/icons";
+import {App} from "@capacitor/app";
+import {Token} from "@/models/Token";
 
 
 const formData = ref({
@@ -57,6 +67,7 @@ const formData = ref({
 const router = useRouter();
 const userService = new UserService()
 const isLoading = ref(false);
+const isGoogleLoading = ref(false);
 
 const isFormValid = computed(() => {
   return formData.value.email && formData.value.password;
@@ -64,13 +75,53 @@ const isFormValid = computed(() => {
 
 async function signIn() {
   isLoading.value = true
-  const added = await userService.signIn(formData.value.email,formData.value.password)
-  isLoading.value = false
-  if (!added) {
-    console.error("Erreur lors de la connexion:", error);
-  } else {
+  try {
+    await userService.signIn(formData.value.email,formData.value.password)
+    isLoading.value = false
     await router.push('/tabs/home');
+  }catch (error){
+    isLoading.value = false
+    console.error("Erreur lors de la connexion:", error);
   }
+}
+
+async function signInWithGoogle() {
+  isGoogleLoading.value = true
+  await userService.signInWithGoogle()
+
+  App.addListener('appUrlOpen', async ({ url }) => {
+    if (url.startsWith('app-courses://')) {
+      const token = extractTokenFromUrl(url)
+      try {
+        await setSessionFromUserToken(token)
+        isGoogleLoading.value = false
+        await router.push('/')
+      }catch (error){
+        isGoogleLoading.value = false
+        console.log(error)
+      }
+    }
+  });
+}
+
+function extractTokenFromUrl(url: string): Token | null {
+  const fragment = url.split('#')[1];
+
+  if (fragment) {
+    const params = new URLSearchParams(fragment);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+
+    if (accessToken && refreshToken){
+      return new Token(accessToken,refreshToken)
+    }
+  }
+
+  return null;
+}
+
+async function setSessionFromUserToken(token: Token){
+  await userService.setUserSession(token.accessToken, token.refreshToken);
 }
 
 </script>
