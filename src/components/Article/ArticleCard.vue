@@ -80,7 +80,7 @@ onMounted(() => {
 
 <style scoped>
 ion-card-header {
-  padding: 3px 20px;
+  padding: 3px 29px;
 }
 
 ion-card {
@@ -95,6 +95,7 @@ ion-item-sliding {
 
 ion-card-content {
   padding-bottom: 5px;
+  padding-left: 29px;
 }
 
 .opacity {

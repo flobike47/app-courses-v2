@@ -26,21 +26,8 @@ export class ArticleService{
             .eq('list', listId)
             .order("label")
 
-        switch (status){
-            case 200:
-                if (lists){
-                    return lists
-                }else {
-                    throw new Error("Pas d'articles trouvé pour cette liste")
-                }
-                break
-            case 404:
-                throw new Error("Table not found")
-                break
-            case 401:
-                throw new Error("Appel non autorisé")
-                break
-        }
+        if (status == 200) return lists
+        else throw error
     }
 
 

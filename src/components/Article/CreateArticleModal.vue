@@ -4,24 +4,26 @@
       :breakpoints="[0, 0.7, 1]"
       :initial-breakpoint="0.7"
       :handle="false"
+      @ionModalDidPresent="onModalOpen"
   >
     <ion-content>
       <form @submit.prevent="createArticle">
         <ion-list>
-          <ion-item>
-            <ion-input
-                label="Nom de l'article:"
-                v-model="formData.name"
-                placeholder="Entrez le nom de la liste"
-                required
-            />
-          </ion-item>
+          <div v-if="!isLoadingContent">
+            <ion-item>
+              <ion-input
+                  label="Nom de l'article:"
+                  v-model="formData.name"
+                  placeholder="Entrez le nom de la liste"
+                  required
+              />
+            </ion-item>
 
-          <ion-item>
-            <div>
-              <h6>Selectionne l'unité :</h6>
-              <div class="color-picker">
-                <div class="color-picker-row">
+            <ion-item>
+              <div >
+                <h6>Selectionne l'unité :</h6>
+                <div class="color-picker">
+                  <div class="color-picker-row">
                   <span
                       v-for="unity in unities"
                       :key="unity.id"
@@ -31,26 +33,26 @@
                   >
                     {{ unity.name }}
                   </span>
+                  </div>
                 </div>
+                <input type="hidden" :value="formData.unity"/>
               </div>
-              <input type="hidden" :value="formData.unity" />
-            </div>
-          </ion-item>
+            </ion-item>
 
-          <ion-item>
-            <ion-input
-                type="number"
-                label="Valeur:"
-                v-model="formData.unity_value"
-                placeholder="Entrez la valeur"
-            />
-          </ion-item>
+            <ion-item>
+              <ion-input
+                  type="number"
+                  label="Valeur:"
+                  v-model="formData.unity_value"
+                  placeholder="Entrez la valeur"
+              />
+            </ion-item>
 
-          <ion-item>
-          <div>
-            <h6>Selectionne le label :</h6>
-            <div class="color-picker">
-              <div class="color-picker-row">
+            <ion-item>
+              <div>
+                <h6>Selectionne le label :</h6>
+                <div class="color-picker">
+                  <div class="color-picker-row">
                   <span
                       v-for="label in labels"
                       :key="label.id"
@@ -60,25 +62,28 @@
                   >
                     {{ label.name }}
                   </span>
+                  </div>
+                </div>
+                <input type="hidden" :value="formData.label"/>
               </div>
-            </div>
-            <input type="hidden" :value="formData.label" />
-          </div>
-        </ion-item>
+            </ion-item>
 
-          <ion-item>
-            <ion-button
-                type="submit"
-                :size="'default'"
-                class="full-width-button create-button"
-                :disabled="isLoading || !isFormValid"
-            >
-              <span v-if="!isLoading">Créer</span>
-              <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
-            </ion-button>
-          </ion-item>
+            <ion-item>
+              <ion-button
+                  type="submit"
+                  :size="'default'"
+                  class="full-width-button create-button"
+                  :disabled="isLoading || !isFormValid"
+              >
+                <span v-if="!isLoading">Créer</span>
+                <ion-spinner v-if="isLoading" name="crescent"></ion-spinner>
+              </ion-button>
+            </ion-item>
+          </div>
+          <ion-spinner v-if="isLoadingContent" name="crescent"></ion-spinner>
         </ion-list>
       </form>
+
     </ion-content>
   </ion-modal>
 </template>
@@ -93,12 +98,13 @@ import {
   IonButton,
   IonSpinner
 } from '@ionic/vue';
-import { onMounted, onUnmounted, ref, computed } from 'vue';
+import {onMounted, onUnmounted, ref, computed, onUpdated} from 'vue';
 import eventBus from "@/services/EventBus";
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 import {ArticleService} from "@/services/ArticleService";
 import {LabelService} from "@/services/LabelService";
 import {UnityService} from "@/services/UnityService";
+import {ErrorsUtils} from "@/models/ErrorsUtils";
 
 const service = new ArticleService();
 const labelService = new LabelService();
@@ -108,6 +114,7 @@ let listId = null
 
 const modal = ref();
 const isLoading = ref(false);
+const isLoadingContent = ref(false);
 
 const unities = ref([])
 const labels = ref([])
@@ -116,7 +123,7 @@ const formData = ref({
   name: '',
   unity_value: null,
   label: null,
-  unity:null,
+  unity: null,
 });
 
 const isFormValid = computed(() => {
@@ -132,12 +139,22 @@ const selectLabel = (labelId) => {
   formData.value.label = formData.value.label === labelId ? null : labelId
 }
 
-async function fetchUnities(){
-  unities.value = await unityService.getUnities()
+async function fetchUnities() {
+  try {
+    unities.value = await unityService.getUnities()
+  } catch (error) {
+    modal.value.$el.dismiss()
+    throw new Error(ErrorsUtils.RETRIEVE_UNITIES)
+  }
 }
 
 async function fetchLabels() {
-  labels.value = await labelService.getLabels()
+  try {
+    labels.value = await labelService.getLabels()
+  } catch (error) {
+    modal.value.$el.dismiss()
+    throw new Error(ErrorsUtils.RETRIEVE_LABELS)
+  }
 }
 
 const createArticle = async () => {
@@ -154,13 +171,13 @@ const createArticle = async () => {
     resetModal()
     eventBus.emit(ArticleCommands.RELOAD(listId))
   } catch (error) {
-    console.error('Erreur lors de la création:', error)
+    throw new Error(ErrorsUtils.CREATION)
   } finally {
     isLoading.value = false
   }
 }
 
-function resetModal(){
+function resetModal() {
   formData.value.unity_value = null
   formData.value.unity = null
   formData.value.label = null
@@ -168,6 +185,7 @@ function resetModal(){
 
 
 }
+
 function openModal(id) {
   listId = id
   modal.value.$el.present();
@@ -178,10 +196,24 @@ function closeModal() {
 }
 
 onMounted(() => {
-  fetchUnities()
-  fetchLabels()
-  eventBus.on(ArticleCommands.OPEN_CREATION,openModal);
+  eventBus.on(ArticleCommands.OPEN_CREATION, openModal);
 });
+
+const onModalOpen = async () => {
+  isLoadingContent.value = true
+  console.log('La modale est ouverte !');
+
+  if (!unities.value == []) {
+    await fetchUnities()
+  }
+
+  if (!labels.value == []) {
+    await fetchLabels()
+  }
+
+  isLoadingContent.value = false
+};
+
 
 onUnmounted(() => {
   eventBus.off(ArticleCommands.OPEN_CREATION);

@@ -73,6 +73,7 @@ import eventBus from "@/services/EventBus";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ToasterCommands} from "@/models/eventCommand/ToasterCommands";
+import {ErrorsUtils} from "@/models/ErrorsUtils";
 
 const service = new ListService();
 const modal = ref();
@@ -113,15 +114,16 @@ async function createList() {
   isLoading.value = true;
   let list = new List(formData.value.listName, formData.value.selectedColor);
 
-  const adding = await service.createList(list);
-
-  if (adding) {
+  try {
+    await service.createList(list);
     closeModal();
     resetModal();
     eventBus.emit(ListCommands.RELOAD);
+  }catch (error) {
+    throw new Error(ErrorsUtils.CREATION)
+  }finally {
+    isLoading.value = false;
   }
-
-  isLoading.value = false;
 }
 
 function resetModal() {

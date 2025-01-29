@@ -10,33 +10,20 @@ export class ListService {
 
     async getLists(): List[] {
 
-        const {data: lists, status} = await supabase
+        const {data: lists, status,error} = await supabase
             .from(this.TABLE_NAME)
             .select()
 
-        switch (status){
-            case 200:
-                if (lists){
-                    return lists
-                }else {
-                    throw new Error("Pas de Liste trouvé")
-                }
-                break
-            case 404:
-                throw new Error("Table not found")
-                break
-            case 401:
-                throw new Error("Appel non autorisé")
-                break
-        }
+        if (status == 200) return lists
+        else throw error
     }
 
     async createList(list: List): boolean {
-        const { status } = await supabase.from(this.TABLE_NAME).insert(list)
+        const { status ,error} = await supabase.from(this.TABLE_NAME).insert(list)
         if (status == 201){
             return true
         }else {
-            console.log(status)
+            throw error
         }
 
     }
@@ -50,7 +37,7 @@ export class ListService {
         if (status == 204){
             return true
         }else {
-            console.log(error)
+            throw error
         }
     }
 

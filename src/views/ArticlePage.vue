@@ -76,16 +76,17 @@ import {
   IonFab,
   IonFabButton
 } from "@ionic/vue";
-import { useRoute } from "vue-router";
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import { ArticleService } from "@/services/ArticleService";
+import {useRoute} from "vue-router";
+import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
 import eventBus from "@/services/EventBus";
-import { ArticleCommands } from "@/models/eventCommand/ArticleCommands";
-import { ellipsisVertical, trash } from "ionicons/icons";
+import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
+import {ellipsisVertical, trash} from "ionicons/icons";
 import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 import {Article} from "@/models/Article";
 import {AppStorageService} from "@/services/AppStorageService";
+import {ErrorsUtils} from "@/models/ErrorsUtils";
 
 const route = useRoute();
 const service = new ArticleService();
@@ -153,7 +154,7 @@ const fetchArticles = async () => {
 
     applyFilterArticles();
   } catch (error) {
-    console.error(error);
+    throw new Error(ErrorsUtils.RETRIEVE_ARTICLES)
   } finally {
     isLoading.value = false;
   }
@@ -168,7 +169,7 @@ const handleArticleSelection = (article: Article) => {
   }
 
   const selectedIds = selectedArticles.value.map(a => a.id);
-  storageService.setSavedArticles(listId,selectedIds)
+  storageService.setSavedArticles(listId, selectedIds)
 };
 
 const deleteSelectedArticles = async () => {

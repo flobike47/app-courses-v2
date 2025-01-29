@@ -81,7 +81,7 @@ async function signIn() {
     await router.push('/tabs/home');
   }catch (error){
     isLoading.value = false
-    console.error("Erreur lors de la connexion:", error);
+    throw error
   }
 }
 

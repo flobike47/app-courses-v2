@@ -54,7 +54,7 @@ import { List } from '@/models/List';
 import eventBus from "@/services/EventBus";
 import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
-import router from "@/router";
+import {ErrorsUtils} from "@/models/ErrorsUtils";
 
 const service = new ListService()
 
@@ -74,15 +74,12 @@ const fetchLists = async () => {
     isLoading.value = true;
     lists.value = await service.getLists();
   } catch (error) {
-    console.error(error);
+    throw new Error(ErrorsUtils.RETRIEVE_LISTS)
   } finally {
     isLoading.value = false;
   }
 };
 
-const navigateToArticles = () => {
-  router.push('/articles',{});
-};
 const handleRefresh = async (event: CustomEvent) => {
   await fetchLists();
   (event.target as any).complete();
