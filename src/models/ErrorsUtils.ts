@@ -6,6 +6,7 @@ export enum ErrorsUtils {
     RETRIEVE_ARTICLES = "Erreur lors de la récupération des articles ",
     RETRIEVE_LISTS = "Erreur lors de la récupération des listes ",
     DELETION = "Erreur lors de la suppression ",
+    CIRCLE_NOT_FOUND = "Cercle non trouvé"
 
 
 }

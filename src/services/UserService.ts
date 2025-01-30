@@ -1,6 +1,7 @@
 import {supabase} from "@/config/supabaseClientConfig";
 import {Capacitor} from "@capacitor/core";
 import {User} from "@/models/User";
+import {Circle} from "@/models/Circle";
 
 export class UserService {
     TABLE_NAME = "User"
@@ -84,6 +85,18 @@ export class UserService {
         if (!userFound) {
             await this.createUserInDB(userSession??null)
         }
+    }
+
+    async updateCircleUserInDB(circle: Circle){
+        const uuid = (await this.getUserSession()).data.session?.user.id
+
+        const { error } = await supabase
+            .from(this.TABLE_NAME)
+            .update({circle: circle.id})
+            .eq("id",uuid)
+
+        if (error) throw error
+
     }
 
 

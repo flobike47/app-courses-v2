@@ -23,6 +23,8 @@ export class ListService {
     }
 
     async createList(list: List): boolean {
+        const user = await this.userService.getUserInDB()
+        list.circle = user.circle.id
         const { status ,error} = await supabase.from(this.TABLE_NAME).insert(list)
         if (status == 201){
             return true
