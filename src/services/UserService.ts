@@ -2,7 +2,7 @@ import {supabase} from "@/config/supabaseClientConfig";
 import {Capacitor} from "@capacitor/core";
 
 export class UserService {
-    TABLE_NAME = "Article"
+    TABLE_NAME = "User"
 
     constructor() {
     }
@@ -27,9 +27,8 @@ export class UserService {
             email: email,
             password: password,
         });
+        if (error) throw error;
 
-        if (error) throw error
-        else return true
     }
 
     async signInWithGoogle(){
@@ -56,6 +55,31 @@ export class UserService {
 
         if (error) throw error
         else return true
+    }
+
+    async createUserInDB(data){
+        const { error } = await supabase
+            .from(this.TABLE_NAME)
+            .insert([{id:data.user.id, name:data.user.user_metadata.full_name}])
+
+        if (error) throw error
+    }
+
+    async getUserInDB(uuid: string){
+        const { data, error } = await supabase
+            .from(this.TABLE_NAME)
+            .select('id')
+            .eq("id",uuid)
+
+
+        if (error) throw error;
+        return data
+
+    }
+
+    async finishGoogleLogin(userSession){
+        const userFound = this.getUserInDB(userSession?.user.id)
+        if (!userFound) await this.createUserInDB(userSession??null)
     }
 
 

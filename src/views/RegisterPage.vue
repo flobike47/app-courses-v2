@@ -45,8 +45,9 @@ import {
 } from '@ionic/vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {supabase} from "@/config/supabaseClientConfig";
 import {UserService} from "@/services/UserService";
+import eventBus from "@/services/EventBus";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const formData = ref({
   email: '',
@@ -64,13 +65,15 @@ const isFormValid = computed(() => {
 
 async function signUp() {
   isLoading.value = true
-  const added = await userService.signUp(formData.value.email, formData.value.password, formData.value.name)
-  isLoading.value = false
 
-  if (!added) {
-    console.error("Erreur lors de l'inscription:", error);
-  } else {
+  try {
+    await userService.signUp(formData.value.email, formData.value.password, formData.value.name)
     await router.push('/login');
+  }catch (error){
+    console.error("Erreur lors de l'inscription:", error);
+    eventBus.emit(ErrorCommands.ERROR,error)
+  }finally {
+    isLoading.value = false
   }
 }
 </script>

@@ -98,11 +98,11 @@ async function signInWithGoogle() {
       const token = extractTokenFromUrl(url)
       try {
         await setSessionFromUserToken(token)
-        isGoogleLoading.value = false
         await router.push('/')
       } catch (error) {
-        isGoogleLoading.value = false
         console.log(error)
+      } finally {
+        isGoogleLoading.value = false
       }
     }
   });

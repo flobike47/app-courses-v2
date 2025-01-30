@@ -58,6 +58,7 @@ async function beforeEach(to, from, next)  {
   if (!session ) {
     return next('/login')
   }else {
+    await userService.finishGoogleLogin(session)
     next()
   }
 }
