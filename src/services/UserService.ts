@@ -1,5 +1,6 @@
 import {supabase} from "@/config/supabaseClientConfig";
 import {Capacitor} from "@capacitor/core";
+import {User} from "@/models/User";
 
 export class UserService {
     TABLE_NAME = "User"
@@ -63,23 +64,26 @@ export class UserService {
             .insert([{id:data.user.id, name:data.user.user_metadata.full_name}])
 
         if (error) throw error
+
     }
 
-    async getUserInDB(uuid: string){
+    async getUserInDB() : User{
+        const uuid = (await this.getUserSession()).data.session?.user.id
         const { data, error } = await supabase
             .from(this.TABLE_NAME)
-            .select('id')
+            .select('id, name, circle(id, code)')
             .eq("id",uuid)
 
-
         if (error) throw error;
-        return data
+        return data[0]
 
     }
 
     async finishGoogleLogin(userSession){
-        const userFound = this.getUserInDB(userSession?.user.id)
-        if (!userFound) await this.createUserInDB(userSession??null)
+        const userFound: User = await this.getUserInDB()
+        if (!userFound) {
+            await this.createUserInDB(userSession??null)
+        }
     }
 
 

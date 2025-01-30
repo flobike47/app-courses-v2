@@ -73,7 +73,7 @@ onUnmounted(() => {
 const fetchLists = async () => {
   try {
     isLoading.value = true;
-    lists.value = await service.getLists();
+    lists.value = await service.getCircleLists();
   } catch (error) {
     eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.RETRIEVE_LISTS))
   } finally {

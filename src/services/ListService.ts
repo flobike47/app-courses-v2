@@ -1,18 +1,22 @@
 import {List} from "@/models/List";
 import {supabase} from "@/config/supabaseClientConfig";
+import {UserService} from "@/services/UserService";
 
 export class ListService {
 
     TABLE_NAME = "List"
 
+    userService = new UserService()
+
     constructor() {
     }
 
-    async getLists(): List[] {
-
+    async getCircleLists(): List[] {
+        const user = await this.userService.getUserInDB()
         const {data: lists, status,error} = await supabase
             .from(this.TABLE_NAME)
             .select()
+            .eq('circle', user.circle.id)
 
         if (status == 200) return lists
         else throw error

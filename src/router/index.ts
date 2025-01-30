@@ -4,7 +4,10 @@ import TabsPage from '../views/NavigationPage.vue'
 import {UserService} from "@/services/UserService";
 import RegisterPage from "@/views/RegisterPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
+import CirclePage from "@/views/CirclePage.vue";
+import {CircleService} from "@/services/CircleService";
 const userService = new UserService()
+const circleService = new CircleService()
 const routes: Array<RouteRecordRaw> = [
 
   {
@@ -20,9 +23,13 @@ const routes: Array<RouteRecordRaw> = [
     component: RegisterPage,
   },
   {
+    path: '/circle',
+    component: CirclePage,
+  },
+  {
     path: '/tabs/',
     component: TabsPage,
-    beforeEnter:[beforeEach],
+    beforeEnter:[beforeEach,beforeHome],
     children: [
       {
         path: '',
@@ -59,6 +66,17 @@ async function beforeEach(to, from, next)  {
     return next('/login')
   }else {
     await userService.finishGoogleLogin(session)
+    next()
+  }
+}
+
+async function beforeHome(to, from, next)  {
+
+  const circle = await circleService.getUserCircle()
+  
+  if (!circle ) {
+    return next('/circle')
+  }else {
     next()
   }
 }
