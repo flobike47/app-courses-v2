@@ -55,6 +55,7 @@ import eventBus from "@/services/EventBus";
 import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const service = new ListService()
 
@@ -74,7 +75,7 @@ const fetchLists = async () => {
     isLoading.value = true;
     lists.value = await service.getLists();
   } catch (error) {
-    throw new Error(ErrorsUtils.RETRIEVE_LISTS)
+    eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.RETRIEVE_LISTS))
   } finally {
     isLoading.value = false;
   }

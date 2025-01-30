@@ -74,6 +74,7 @@ import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ToasterCommands} from "@/models/eventCommand/ToasterCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const service = new ListService();
 const modal = ref();
@@ -120,7 +121,7 @@ async function createList() {
     resetModal();
     eventBus.emit(ListCommands.RELOAD);
   }catch (error) {
-    throw new Error(ErrorsUtils.CREATION)
+    eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.CREATION))
   }finally {
     isLoading.value = false;
   }

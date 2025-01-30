@@ -30,6 +30,7 @@ import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import router from "@/router";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const props = defineProps<{
   list: List
@@ -62,7 +63,7 @@ async function deleteItem(toDelete: boolean) {
       await service.deleteList(props.list.id)
       eventBus.emit(ListCommands.RELOAD)
     }catch (error){
-      throw new Error(ErrorsUtils.DELETION)
+      eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.DELETION))
     }
 
   }

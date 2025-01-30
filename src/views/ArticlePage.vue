@@ -87,6 +87,7 @@ import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 import {Article} from "@/models/Article";
 import {AppStorageService} from "@/services/AppStorageService";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const route = useRoute();
 const service = new ArticleService();
@@ -154,7 +155,7 @@ const fetchArticles = async () => {
 
     applyFilterArticles();
   } catch (error) {
-    throw new Error(ErrorsUtils.RETRIEVE_ARTICLES)
+    eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.RETRIEVE_ARTICLES))
   } finally {
     isLoading.value = false;
   }

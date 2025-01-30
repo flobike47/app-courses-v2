@@ -105,6 +105,7 @@ import {ArticleService} from "@/services/ArticleService";
 import {LabelService} from "@/services/LabelService";
 import {UnityService} from "@/services/UnityService";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 const service = new ArticleService();
 const labelService = new LabelService();
@@ -144,7 +145,7 @@ async function fetchUnities() {
     unities.value = await unityService.getUnities()
   } catch (error) {
     modal.value.$el.dismiss()
-    throw new Error(ErrorsUtils.RETRIEVE_UNITIES)
+    eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.RETRIEVE_UNITIES))
   }
 }
 
@@ -153,7 +154,7 @@ async function fetchLabels() {
     labels.value = await labelService.getLabels()
   } catch (error) {
     modal.value.$el.dismiss()
-    throw new Error(ErrorsUtils.RETRIEVE_LABELS)
+    eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.RETRIEVE_LABELS))
   }
 }
 
@@ -171,7 +172,7 @@ const createArticle = async () => {
     resetModal()
     eventBus.emit(ArticleCommands.RELOAD(listId))
   } catch (error) {
-    throw new Error(ErrorsUtils.CREATION)
+    eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.CREATION))
   } finally {
     isLoading.value = false
   }

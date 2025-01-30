@@ -25,7 +25,7 @@
           </ion-button>
           <ion-button class="google-login-button" expand="block" @click="signInWithGoogle">
 
-            <ion-icon v-if="!isGoogleLoading" slot="start" :icon="logoGoogle" />
+            <ion-icon v-if="!isGoogleLoading" slot="start" :icon="logoGoogle"/>
             <span v-if="!isGoogleLoading">Se connecter avec Google</span>
             <ion-spinner v-if="isGoogleLoading" name="crescent"></ion-spinner>
           </ion-button>
@@ -57,6 +57,9 @@ import {UserService} from "@/services/UserService";
 import {logoGoogle} from "ionicons/icons";
 import {App} from "@capacitor/app";
 import {Token} from "@/models/Token";
+import {ErrorsUtils} from "@/models/ErrorsUtils";
+import eventBus from "@/services/EventBus";
+import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
 
 const formData = ref({
@@ -76,12 +79,13 @@ const isFormValid = computed(() => {
 async function signIn() {
   isLoading.value = true
   try {
-    await userService.signIn(formData.value.email,formData.value.password)
-    isLoading.value = false
+    await userService.signIn(formData.value.email, formData.value.password)
     await router.push('/tabs/home');
-  }catch (error){
+  } catch (error) {
+    console.log(error)
+    eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.INVALID_CREDENTIALS))
+  } finally {
     isLoading.value = false
-    throw error
   }
 }
 
@@ -89,14 +93,14 @@ async function signInWithGoogle() {
   isGoogleLoading.value = true
   await userService.signInWithGoogle()
 
-  App.addListener('appUrlOpen', async ({ url }) => {
+  App.addListener('appUrlOpen', async ({url}) => {
     if (url.startsWith('app-courses://')) {
       const token = extractTokenFromUrl(url)
       try {
         await setSessionFromUserToken(token)
         isGoogleLoading.value = false
         await router.push('/')
-      }catch (error){
+      } catch (error) {
         isGoogleLoading.value = false
         console.log(error)
       }
@@ -112,15 +116,15 @@ function extractTokenFromUrl(url: string): Token | null {
     const accessToken = params.get('access_token');
     const refreshToken = params.get('refresh_token');
 
-    if (accessToken && refreshToken){
-      return new Token(accessToken,refreshToken)
+    if (accessToken && refreshToken) {
+      return new Token(accessToken, refreshToken)
     }
   }
 
   return null;
 }
 
-async function setSessionFromUserToken(token: Token){
+async function setSessionFromUserToken(token: Token) {
   await userService.setUserSession(token.accessToken, token.refreshToken);
 }
 
@@ -134,6 +138,7 @@ async function setSessionFromUserToken(token: Token){
   justify-content: center;
   height: 100%;
 }
+
 .google-login-button {
   margin-top: 10px;
   --background: #db4437; /* Couleur du bouton Google */
