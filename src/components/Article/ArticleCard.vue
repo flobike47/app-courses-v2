@@ -102,10 +102,6 @@ ion-card-content {
   opacity: 0.33;
 }
 
-.selected {
-  background-color: var(--ion-color-primary);
-}
-
 .status-dot {
   position: absolute;
   left: 10px;
@@ -114,7 +110,7 @@ ion-card-content {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 3px solid #1a1a1a;
+  border: 3px solid #708090;
   background-color: transparent;
 }
 

@@ -1,7 +1,6 @@
 import {App} from '@capacitor/app';
 import {Router} from 'vue-router';
 import {toastController} from "@ionic/vue";
-import {ErrorsUtils} from "@/models/ErrorsUtils";
 import eventBus from "@/services/EventBus";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 

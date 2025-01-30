@@ -16,34 +16,26 @@
     </ion-header>
     <ion-content>
       <div v-if="!isLoading">
-
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Articles:</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <div v-if="filteredArticles && filteredArticles.length">
-              <ArticleCard
-                  v-for="article in filteredArticles"
-                  :key="article.id"
-                  :article="article"
-                  :model-value="article.selected"
-                  v-model:selected="article.selected"
-                  @select="handleArticleSelection"
-              />
-            </div>
-            <div v-else class="ion-padding">
-              <ion-card class="not-found">
-                <ion-card-content class="ion-text-center">
-                  <p>Aucun article trouvé</p>
-                  <ion-button @click="openAddingModal" expand="block">
-                    Ajouter un article
-                  </ion-button>
-                </ion-card-content>
-              </ion-card>
-            </div>
-          </ion-card-content>
-        </ion-card>
+        <div v-if="filteredArticles && filteredArticles.length">
+          <ArticleCard
+              v-for="article in filteredArticles"
+              :key="article.id"
+              :article="article"
+              :model-value="article.selected"
+              v-model:selected="article.selected"
+              @select="handleArticleSelection"
+          />
+        </div>
+        <div v-else class="ion-padding">
+          <ion-card class="not-found">
+            <ion-card-content class="ion-text-center">
+              <p>Aucun article trouvé</p>
+              <ion-button @click="openAddingModal" expand="block">
+                Ajouter un article
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </div>
       </div>
 
       <ion-fab vertical="bottom" horizontal="end" slot="fixed">
