@@ -52,6 +52,7 @@ import {CircleService} from "@/services/CircleService";
 import eventBus from "@/services/EventBus";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 import {Circle} from "@/models/Circle";
+import {HapticService} from "@/services/HapticService";
 
 const formData = ref({
   name: '',
@@ -68,7 +69,7 @@ const isFormValid = computed(() => {
 
 async function join() {
   isLoadingJoin.value = true
-
+  HapticService.selectingHaptic()
   try {
     await circleService.joinCircle(formData.value.name)
     await router.push('/')
@@ -83,6 +84,7 @@ async function join() {
 
 async function createAndJoin() {
   isLoadingCreate.value = true
+  HapticService.selectingHaptic()
   const circle = new Circle(formData.value.name)
   try {
     await circleService.createCircle(circle)

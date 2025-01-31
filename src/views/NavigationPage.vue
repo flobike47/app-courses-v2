@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-tabs @ionTabsDidChange="hapticsImpactLight">
+    <ion-tabs @ionTabsDidChange="HapticService.selectingHaptic">
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="home" href="/tabs/home">
@@ -25,13 +25,13 @@
 <script setup lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
 import { homeOutline, addCircleOutline, cogOutline } from 'ionicons/icons';
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import {onMounted, ref, watch} from 'vue';
 import eventBus from '@/services/EventBus';
 import { ListCommands } from '@/models/eventCommand/ListCommands';
 import { useRoute } from 'vue-router';
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 import {AppStorageService} from "@/services/AppStorageService";
+import {HapticService} from "@/services/HapticService";
 
 
 const route = useRoute();
@@ -52,19 +52,17 @@ onMounted(async () => {
 });
 
 function openCreatingListModal() {
-  hapticsImpactLight();
+  HapticService.selectingHaptic()
   eventBus.emit(ListCommands.OPEN_CREATION);
 }
 
 function openCreatingArticleModal() {
-  hapticsImpactLight();
+  HapticService.selectingHaptic()
   const listId = route.query.listId
   eventBus.emit(ArticleCommands.OPEN_CREATION,listId);
 }
 
-const hapticsImpactLight = async () => {
-  await Haptics.impact({ style: ImpactStyle.Light });
-};
+
 
 watch(() => route.path, () => {
   updateButtonState();

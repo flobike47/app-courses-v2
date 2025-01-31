@@ -43,6 +43,7 @@ import {
   IonItem
 } from '@ionic/vue';
 import {ref, defineEmits, watch, onMounted} from 'vue';
+import {HapticService} from "@/services/HapticService";
 
 const props = defineProps({
   article: {
@@ -66,6 +67,7 @@ watch(() => props.modelValue, (newValue) => {
 });
 
 const select = () => {
+  HapticService.selectingHaptic()
   selected.value = !selected.value;
   emit('update:modelValue', selected.value);
   emit('select', props.article);
