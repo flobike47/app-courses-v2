@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">app-courses-v2</string>
-    <string name="title_activity_main">app-courses-v2</string>
+    <string name="app_name">Courses</string>
+    <string name="title_activity_main">Courses</string>
     <string name="package_name">com.fb.app</string>
     <string name="custom_url_scheme">com.fb.app</string>
 </resources>

@@ -19,21 +19,21 @@ export class CircleService{
         }
     }
 
-    async getCircleByCode(code: string): Circle{
+    async getCircleByCode(code: string, private_code:string): Circle{
         console.log(code)
         const { data, error } = await supabase
             .from(this.TABLE_NAME)
             .select('id, code')
             .eq("code",code)
+            .eq("private_code",private_code)
 
         if (error) throw error;
         console.log(data)
         return data[0]
     }
 
-    async joinCircle(code:string){
-        const circle = await this.getCircleByCode(code)
-        console.log(circle)
+    async joinCircle(code:string, private_code:string){
+        const circle = await this.getCircleByCode(code,private_code)
 
         if (!circle) throw Error(ErrorsUtils.CIRCLE_NOT_FOUND)
 
@@ -41,12 +41,26 @@ export class CircleService{
     }
 
     async createCircle(circle:Circle){
-        const { status ,error} = await supabase.from(this.TABLE_NAME).insert(circle)
+        circle.private_code = this.generateRandomPrivateCode()
+        const { status ,error, data:circleInserted} = await supabase
+            .from(this.TABLE_NAME)
+            .insert(circle)
+            .select()
 
         if (status == 201){
-            return true
+            console.log(circleInserted)
+            return circleInserted[0]
         }else {
             throw error
         }
+    }
+
+    private generateRandomPrivateCode(): string {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < 10; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
     }
 }

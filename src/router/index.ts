@@ -25,6 +25,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/circle',
     component: CirclePage,
+    beforeEnter:[beforeEach],
   },
   {
     path: '/tabs/',
@@ -73,7 +74,7 @@ async function beforeEach(to, from, next)  {
 async function beforeHome(to, from, next)  {
 
   const circle = await circleService.getUserCircle()
-  
+
   if (!circle ) {
     return next('/circle')
   }else {

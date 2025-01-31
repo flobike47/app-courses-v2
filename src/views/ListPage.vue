@@ -4,6 +4,14 @@
       <ion-toolbar>
         <ion-title>Mes listes</ion-title>
         <ion-progress-bar type="indeterminate" v-if="isLoading"></ion-progress-bar>
+        <ion-buttons slot="end">
+          <ion-button class="align" @click="join">
+            <ion-icon slot="icon-only" :icon="enterOutline"></ion-icon>
+          </ion-button>
+          <ion-button>
+            <ion-icon slot="icon-only" :icon="shareOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -46,7 +54,7 @@ import {
   IonButton,
   IonProgressBar,
   IonRefresher,
-  IonRefresherContent
+  IonRefresherContent, IonButtons, IonIcon
 } from '@ionic/vue';
 import {onMounted, onUnmounted, ref} from 'vue';
 import { ListService } from '@/services/ListService';
@@ -56,8 +64,16 @@ import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import {ellipsisVertical, enterOutline, shareOutline} from "ionicons/icons";
+import {CircleService} from "@/services/CircleService";
+import {AlertCommands} from "@/models/eventCommand/AlertCommands";
+import {AlertInstruction} from "@/models/AlertInstruction";
+import {CircleCommands} from "@/models/eventCommand/CircleCommands";
+import {CircleAlertInput} from "@/models/CircleAlertInput";
+import router from "@/router";
 
 const service = new ListService()
+const circleService = new CircleService()
 
 const lists = ref<List[] | null>(null);
 const isLoading = ref(true);
@@ -86,6 +102,10 @@ const handleRefresh = async (event: CustomEvent) => {
   (event.target as any).complete();
 };
 
+async function join(){
+  router.push("/circle")
+}
+
 const createNewList = () => {
   eventBus.emit(ListCommands.OPEN_CREATION)
 };
@@ -102,5 +122,9 @@ const createNewList = () => {
   height: 20px;
   border-radius: 50%;
   margin-left: 10px;
+}
+
+.align {
+  padding-top: 5px;
 }
 </style>
