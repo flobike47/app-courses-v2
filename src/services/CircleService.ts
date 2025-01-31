@@ -39,4 +39,14 @@ export class CircleService{
 
         await this.userService.updateCircleUserInDB(circle)
     }
+
+    async createCircle(circle:Circle){
+        const { status ,error} = await supabase.from(this.TABLE_NAME).insert(circle)
+
+        if (status == 201){
+            return true
+        }else {
+            throw error
+        }
+    }
 }

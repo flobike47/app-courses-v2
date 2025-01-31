@@ -6,7 +6,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <form @submit.prevent="join">
+      <form >
         <div class="register-container">
           <ion-item class="input-item">
             <ion-input v-model="formData.name" label="Nom" placeholder="Entrez le nom du cercle"></ion-input>
@@ -16,6 +16,7 @@
               type="submit"
               class="register-button" expand="block"
               :disabled="isLoadingJoin || !isFormValid"
+              @click="join"
           >
             <span v-if="!isLoadingJoin">Rejoindre ce cercle</span>
             <ion-spinner v-if="isLoadingJoin" name="crescent"></ion-spinner>
@@ -24,7 +25,8 @@
           <ion-button
               type="submit"
               class="register-button" expand="block"
-              :disabled="true"
+              :disabled="isLoadingCreate || !isFormValid"
+              @click="createAndJoin"
           >
             <span v-if="!isLoadingCreate">Créer le cercle</span>
             <ion-spinner v-if="isLoadingCreate" name="crescent"></ion-spinner>
@@ -49,6 +51,7 @@ import {useRouter} from 'vue-router';
 import {CircleService} from "@/services/CircleService";
 import eventBus from "@/services/EventBus";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import {Circle} from "@/models/Circle";
 
 const formData = ref({
   name: '',
@@ -74,6 +77,23 @@ async function join() {
     eventBus.emit(ErrorCommands.ERROR,error)
   }finally {
     isLoadingJoin.value = false
+
+  }
+}
+
+async function createAndJoin() {
+  isLoadingCreate.value = true
+  const circle = new Circle(formData.value.name)
+  try {
+    await circleService.createCircle(circle)
+    await circleService.joinCircle(formData.value.name)
+
+    await router.push('/')
+  }catch (error){
+    console.log(error)
+    eventBus.emit(ErrorCommands.ERROR,error)
+  }finally {
+    isLoadingCreate.value = false
 
   }
 }
