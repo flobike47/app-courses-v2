@@ -8,7 +8,7 @@
           <ion-button class="align" @click="join">
             <ion-icon slot="icon-only" :icon="enterOutline"></ion-icon>
           </ion-button>
-          <ion-button>
+          <ion-button @click="share">
             <ion-icon slot="icon-only" :icon="shareOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
@@ -64,13 +64,14 @@ import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
-import {ellipsisVertical, enterOutline, shareOutline} from "ionicons/icons";
+import {enterOutline, shareOutline} from "ionicons/icons";
 import {CircleService} from "@/services/CircleService";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import {AlertInstruction} from "@/models/AlertInstruction";
 import {CircleCommands} from "@/models/eventCommand/CircleCommands";
 import {CircleAlertInput} from "@/models/CircleAlertInput";
 import router from "@/router";
+import {AlertShareCircleInstruction} from "@/models/AlertShareCircleInstruction";
 
 const service = new ListService()
 const circleService = new CircleService()
@@ -104,6 +105,12 @@ const handleRefresh = async (event: CustomEvent) => {
 
 async function join(){
   router.push("/circle")
+}
+
+async function share(){
+  const instruction = new AlertShareCircleInstruction("",null);
+  instruction.circle = await circleService.getUserCircle()
+  eventBus.emit(AlertCommands.CIRCLE_SHARE, instruction)
 }
 
 const createNewList = () => {

@@ -72,7 +72,7 @@ export class UserService {
         const uuid = (await this.getUserSession()).data.session?.user.id
         const { data, error } = await supabase
             .from(this.TABLE_NAME)
-            .select('id, name, circle(id, code)')
+            .select('id, name, circle(id, code, private_code)')
             .eq("id",uuid)
 
         if (error) throw error;

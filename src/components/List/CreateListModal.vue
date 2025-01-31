@@ -72,7 +72,6 @@ import { List } from "@/models/List";
 import eventBus from "@/services/EventBus";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
-import {ToasterCommands} from "@/models/eventCommand/ToasterCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
@@ -108,7 +107,7 @@ function selectColor(color: string) {
 async function createList() {
   if (!isFormValid.value) {
     await Haptics.impact({ style: ImpactStyle.Light });
-    eventBus.emit(ToasterCommands.ERROR, 'veuillez remplir tous les champs');
+    eventBus.emit(ErrorCommands.ERROR, new Error('veuillez remplir tous les champs'));
     return;
   }
 
