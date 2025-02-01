@@ -10,7 +10,7 @@ export class ArticleService{
     async getListArticle(listId: number): Article[] {
 
 
-        const {data: lists, status} = await supabase
+        const {data: lists, status, error} = await supabase
             .from(this.TABLE_NAME)
             .select(`id,
                 created_at,
@@ -18,7 +18,7 @@ export class ArticleService{
                 unity(id, name),
                 unity_value,
                 list(id, name),
-                added_by,
+                added_by(name),
                 deleted,
                 deleted_at,
                 label(id,name)

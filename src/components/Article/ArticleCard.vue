@@ -13,9 +13,10 @@
           </ion-card-header>
 
           <ion-card-content>
-            <p>{{ article.label.name }}</p>
-            <p style="font-size: 5pt">
-              <strong><i>ajouté par: {{ article.added_by }}</i></strong>
+            <p v-if="article.label">{{ article.label.name }}</p>
+            <p style="font-size: 7.5pt">
+              <i v-if="article.added_by">ajouté par: {{ article.added_by.name}}</i>
+              <i v-if="!article.added_by">L'utilisateur qui a ajouté n'existe plus</i>
             </p>
           </ion-card-content>
         </div>

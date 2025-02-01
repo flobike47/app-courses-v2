@@ -1,5 +1,6 @@
 import {Unity} from "@/models/Unity";
 import {Label} from "@/models/Label";
+import {User} from "@/models/User";
 
 export class Article {
     public id: number;
@@ -8,7 +9,7 @@ export class Article {
     public unity: Unity
     public unity_value: number
     public list: number
-    public added_by: string
+    public added_by: User
     public deleted: boolean
     public deleted_at: Date
     public label: Label
