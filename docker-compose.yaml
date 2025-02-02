@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  app-courses-v2:
+    container_name: app-courses-v2
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - default
