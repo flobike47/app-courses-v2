@@ -9,7 +9,7 @@
       <form @submit.prevent="signIn">
         <div class="login-container">
           <ion-item class="input-item">
-            <ion-input type="email" v-model="formData.email" label="Email" placeholder="Entrez votre email"></ion-input>
+            <ion-input inputmode="email" autocorrect=“on” type="email" v-model="formData.email" label="Email" placeholder="Entrez votre email"></ion-input>
           </ion-item>
           <ion-item class="input-item">
             <ion-input type="password" v-model="formData.password" label="Mot de passe"

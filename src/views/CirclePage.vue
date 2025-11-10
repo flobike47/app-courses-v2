@@ -12,7 +12,7 @@
       <form >
         <div class="register-container">
           <ion-item class="input-item">
-            <ion-input v-model="formData.name" label="Nom" placeholder="Entrez le nom du cercle"></ion-input>
+            <ion-input autocorrect=“on” v-model="formData.name" label="Nom" placeholder="Entrez le nom du cercle"></ion-input>
           </ion-item>
 
           <ion-button

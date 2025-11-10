@@ -14,7 +14,8 @@
               <ion-input
                   label="Nom de l'article:"
                   v-model="formData.name"
-                  placeholder="Entrez le nom de la liste"
+                  autocorrect=“on”
+                  placeholder="Entrez le nom de l'article"
                   required
               />
             </ion-item>
@@ -41,6 +42,7 @@
 
             <ion-item>
               <ion-input
+                  inputmode="decimal"
                   type="number"
                   label="Valeur:"
                   v-model="formData.unity_value"

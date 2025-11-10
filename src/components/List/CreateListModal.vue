@@ -11,6 +11,7 @@
           <ion-item>
             <ion-input
                 label="Nom de la liste:"
+                autocorrect=“on”
                 v-model="formData.listName"
                 placeholder="Entrez le nom de la liste"
                 required
