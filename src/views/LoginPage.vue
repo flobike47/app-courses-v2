@@ -1,10 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Connexion</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader :title="'Connexion'"/>
     <ion-content class="ion-padding">
       <form @submit.prevent="signIn">
         <div class="login-container">
@@ -39,18 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonPage,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonButton,
-  IonSpinner,
-  IonToolbar,
-  IonHeader,
-  IonTitle,
-  IonIcon
-} from '@ionic/vue';
+import {IonButton, IonContent, IonIcon, IonInput, IonItem, IonPage, IonSpinner} from '@ionic/vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {UserService} from "@/services/UserService";
@@ -60,6 +45,7 @@ import {Token} from "@/models/Token";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import eventBus from "@/services/EventBus";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 
 const formData = ref({

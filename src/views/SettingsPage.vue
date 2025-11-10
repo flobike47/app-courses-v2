@@ -1,10 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Paramètres</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader :title="'Paramètres'"/>
     <ion-content :fullscreen="true">
       <ion-list :inset="true">
         <ion-item>
@@ -25,21 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonToggle,
-  ToggleCustomEvent
-} from '@ionic/vue';
-import {ref, onMounted} from 'vue';
+import {IonContent, IonItem, IonList, IonPage, IonToggle, ToggleCustomEvent} from '@ionic/vue';
+import {onMounted, ref} from 'vue';
 import {AppStorageService} from "@/services/AppStorageService";
 import router from "@/router";
 import {supabase} from "@/config/supabaseClientConfig";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 const paletteToggle = ref(false);
 const storageService = AppStorageService.getInstance();

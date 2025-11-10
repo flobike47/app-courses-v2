@@ -1,19 +1,20 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Mes listes</ion-title>
-        <ion-progress-bar type="indeterminate" v-if="isLoading"></ion-progress-bar>
-        <ion-buttons slot="end">
-          <ion-button class="align" @click="join">
-            <ion-icon slot="icon-only" :icon="enterOutline"></ion-icon>
-          </ion-button>
-          <ion-button @click="share">
-            <ion-icon slot="icon-only" :icon="shareOutline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader :isLoading="isLoading"
+               :option="[
+                          {
+                            id: 'join-button',
+                            icon: enterOutline,
+                            onClick: () => join()
+                          },
+                          {
+                            id: 'share-button',
+                            icon: shareOutline,
+                            onClick: () => share()
+                          }
+                        ]"
+               :title="'Mes listes'"
+    />
     <ion-content :fullscreen="true">
       <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
@@ -43,22 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonCard,
-  IonCardContent,
-  IonButton,
-  IonProgressBar,
-  IonRefresher,
-  IonRefresherContent, IonButtons, IonIcon
-} from '@ionic/vue';
+import {IonButton, IonCard, IonCardContent, IonContent, IonPage, IonRefresher, IonRefresherContent,} from '@ionic/vue';
 import {onMounted, onUnmounted, ref} from 'vue';
-import { ListService } from '@/services/ListService';
-import { List } from '@/models/List';
+import {ListService} from '@/services/ListService';
+import {List} from '@/models/List';
 import eventBus from "@/services/EventBus";
 import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
@@ -67,11 +56,9 @@ import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 import {enterOutline, shareOutline} from "ionicons/icons";
 import {CircleService} from "@/services/CircleService";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
-import {AlertInstruction} from "@/models/AlertInstruction";
-import {CircleCommands} from "@/models/eventCommand/CircleCommands";
-import {CircleAlertInput} from "@/models/CircleAlertInput";
 import router from "@/router";
 import {AlertShareCircleInstruction} from "@/models/AlertShareCircleInstruction";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 const service = new ListService()
 const circleService = new CircleService()

@@ -1,13 +1,10 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start" v-if="canBack">
-          <ion-back-button default-href="/tabs/home"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Cercle</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader
+        :canBack="canBack"
+        :returnPath="'/tabs/home'"
+        :title="'Cercle'"
+    />
     <ion-content class="ion-padding">
       <form >
         <div class="register-container">
@@ -42,13 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonPage,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonButton, IonToolbar, IonHeader, IonTitle, IonSpinner, IonButtons, IonBackButton,
-} from '@ionic/vue';
+import {IonButton, IonContent, IonInput, IonItem, IonPage, IonSpinner,} from '@ionic/vue';
 import {computed, onMounted, onUpdated, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {CircleService} from "@/services/CircleService";
@@ -61,6 +52,7 @@ import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import {AlertInstruction} from "@/models/AlertInstruction";
 import {CircleCommands} from "@/models/eventCommand/CircleCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 const formData = ref({
   name: '',

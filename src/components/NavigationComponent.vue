@@ -23,12 +23,12 @@
 </template>
 
 <script setup lang="ts">
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { homeOutline, addCircleOutline, cogOutline } from 'ionicons/icons';
+import {IonIcon, IonLabel, IonPage, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs} from '@ionic/vue';
+import {addCircleOutline, cogOutline, homeOutline} from 'ionicons/icons';
 import {onMounted, ref, watch} from 'vue';
 import eventBus from '@/services/EventBus';
-import { ListCommands } from '@/models/eventCommand/ListCommands';
-import { useRoute } from 'vue-router';
+import {ListCommands} from '@/models/eventCommand/ListCommands';
+import {useRoute} from 'vue-router';
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 import {AppStorageService} from "@/services/AppStorageService";
 import {HapticService} from "@/services/HapticService";

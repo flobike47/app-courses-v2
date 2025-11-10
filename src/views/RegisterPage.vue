@@ -1,18 +1,15 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Inscrition</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader :title="'Inscrition'"/>
     <ion-content class="ion-padding">
       <form @submit.prevent="signUp">
         <div class="register-container">
           <ion-item class="input-item">
-            <ion-input type="email" v-model="formData.email" label="Email" placeholder="Entrez votre email"></ion-input>
+            <ion-input v-model="formData.email" autocorrect=“on” label="Email" placeholder="Entrez votre email"
+                       type="email"></ion-input>
           </ion-item>
           <ion-item class="input-item">
-            <ion-input v-model="formData.name" label="Nom" placeholder="Entrez votre nom"></ion-input>
+            <ion-input v-model="formData.name" autocorrect=“on” label="Nom" placeholder="Entrez votre nom"></ion-input>
           </ion-item>
           <ion-item class="input-item">
             <ion-input type="password" v-model="formData.password" label="Mot de passe"
@@ -36,18 +33,13 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonPage,
-  IonContent,
-  IonItem,
-  IonInput,
-  IonButton, IonToolbar, IonHeader, IonTitle, IonSpinner,
-} from '@ionic/vue';
+import {IonButton, IonContent, IonInput, IonItem, IonPage, IonSpinner,} from '@ionic/vue';
 import {computed, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {UserService} from "@/services/UserService";
 import eventBus from "@/services/EventBus";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 const formData = ref({
   email: '',

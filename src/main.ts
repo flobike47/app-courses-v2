@@ -27,14 +27,15 @@ import '@ionic/vue/css/display.css';
  * For more info, please see:
  * https://ionicframework.com/docs/theming/dark-mode
  */
-
 /* @import '@ionic/vue/css/palettes/dark.always.css'; */
 import '@ionic/vue/css/palettes/dark.class.css';
 /*import '@ionic/vue/css/palettes/dark.system.css';*/
-
 /* Theme variables */
 import './theme/variables.css';
 import {ErrorHandlerService} from "@/handler/ErrorHandler";
+import {Keyboard, KeyboardResize, KeyboardStyle} from "@capacitor/keyboard";
+import {Capacitor} from "@capacitor/core";
+import {NetworkService} from "@/services/NetworkService";
 
 export const app = createApp(App)
     .use(IonicVue)
@@ -42,8 +43,23 @@ export const app = createApp(App)
 
 router.isReady().then(() => {
     app.mount('#app');
+    console.log("Configuring keyboard for iOS");
 });
 
 const errorHandlerService = new ErrorHandlerService(router);
+const networkService = new NetworkService();
 
+if (Capacitor.getPlatform() === 'ios') {
 
+    Keyboard.setStyle({style: KeyboardStyle.Default});
+    Keyboard.setAccessoryBarVisible({isVisible: true});
+    Keyboard.setResizeMode({mode: KeyboardResize.Body});
+    Keyboard.addListener("keyboardDidShow", () => {
+        console.log("Keyboard show event fired");
+        if (document.activeElement) {
+            document.activeElement.scrollIntoView({behavior: "auto", block: "nearest"});
+        }
+
+    });
+
+}

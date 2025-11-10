@@ -1,11 +1,12 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/NavigationPage.vue'
+import {createRouter, createWebHistory} from '@ionic/vue-router';
+import {RouteRecordRaw} from 'vue-router';
+import TabsPage from '../components/NavigationComponent.vue'
 import {UserService} from "@/services/UserService";
 import RegisterPage from "@/views/RegisterPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import CirclePage from "@/views/CirclePage.vue";
 import {CircleService} from "@/services/CircleService";
+
 const userService = new UserService()
 const circleService = new CircleService()
 const routes: Array<RouteRecordRaw> = [

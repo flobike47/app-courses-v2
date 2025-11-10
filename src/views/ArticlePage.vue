@@ -1,19 +1,15 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button default-href="/tabs/home"></ion-back-button>
-        </ion-buttons>
-        <ion-title>{{ listName }}</ion-title>
-        <ion-progress-bar type="indeterminate" v-if="isLoading"></ion-progress-bar>
-        <ion-buttons slot="end">
-          <ion-button id="trigger-button" @click="presentPopover($event)">
-            <ion-icon slot="icon-only" :icon="ellipsisVertical"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <AppHeader :isLoading="isLoading"
+               :option="[
+                          {
+                            id: 'popover-button',
+                            icon: ellipsisVertical,
+                            onClick: (e: Event) => presentPopover(e)
+                          }
+                        ]"
+               :title="listName"
+    />
     <ion-content>
       <div v-if="!isLoading">
         <div v-if="filteredArticles && filteredArticles.length">
@@ -50,26 +46,18 @@
 
 <script setup lang="ts">
 import {
-  IonPage,
-  IonIcon,
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonBackButton,
-  IonTitle,
-  IonContent,
-  IonProgressBar,
-  IonCard,
-  IonCardTitle,
-  IonCardHeader,
-  IonCardContent,
   IonButton,
-  popoverController,
+  IonCard,
+  IonCardContent,
+  IonContent,
   IonFab,
-  IonFabButton
+  IonFabButton,
+  IonIcon,
+  IonPage,
+  popoverController
 } from "@ionic/vue";
 import {useRoute} from "vue-router";
-import {onMounted, onUnmounted, ref, watch} from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
 import eventBus from "@/services/EventBus";
@@ -80,6 +68,7 @@ import {Article} from "@/models/Article";
 import {AppStorageService} from "@/services/AppStorageService";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import AppHeader from "@/components/Header/AppHeader.vue";
 
 const route = useRoute();
 const service = new ArticleService();
