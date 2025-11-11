@@ -6,6 +6,9 @@ import RegisterPage from "@/views/RegisterPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import CirclePage from "@/views/CirclePage.vue";
 import {CircleService} from "@/services/CircleService";
+import {NetworkService} from "@/services/NetworkService";
+import eventBus from "@/services/EventBus";
+import {StorageCommands} from "@/models/eventCommand/StorageCommands";
 
 const userService = new UserService()
 const circleService = new CircleService()
@@ -67,20 +70,38 @@ async function beforeEach(to, from, next)  {
   if (!session ) {
     return next('/login')
   }else {
-    await userService.finishGoogleLogin(session)
+      if (NetworkService.networkAvailable) {
+          await userService.finishGoogleLogin(session)
+      }
     next()
   }
 }
 
-async function beforeHome(to, from, next)  {
+async function beforeHome(to, from, next) {
+    const storageKey = "USER_CIRCLE_LOADED"
 
-  const circle = await circleService.getUserCircle()
+    if (NetworkService.networkAvailable) await setUserCircleLoadedInStorage(storageKey)
 
-  if (!circle ) {
-    return next('/circle')
-  }else {
-    next()
-  }
+    eventBus.emit(StorageCommands.OFFLINE_GET, storageKey)
+
+    await new Promise((resolve) => {
+        eventBus.on(storageKey, (value) => {
+            eventBus.off(storageKey)
+
+            if (!value) {
+                resolve(next('/circle'))
+            } else {
+                resolve(next())
+            }
+        })
+    })
+}
+
+async function setUserCircleLoadedInStorage(storageKey: string) {
+    const circle = await circleService.getUserCircle()
+    if (circle) {
+        await eventBus.emit(StorageCommands.OFFLINE_SAVE, {key: storageKey, value: true})
+    }
 }
 
 export default router

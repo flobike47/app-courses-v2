@@ -55,13 +55,11 @@ export class AppStorageService {
 
     public openStorage(): void {
         eventBus.on(StorageCommands.OFFLINE_SAVE, (pair) => {
-            console.log("Saving data offline:", pair);
             this.storageConnector.set(pair.key, pair.value);
         });
 
         eventBus.on(StorageCommands.OFFLINE_GET, async (key) => {
             const value = await this.storageConnector.get(key);
-            console.log("Retrieving offline data for key:", key, "Value:", value);
             eventBus.emit(key, value);
         });
 

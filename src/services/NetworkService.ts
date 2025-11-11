@@ -12,12 +12,14 @@ export class NetworkService {
         Network.addListener('networkStatusChange', status => {
             this.changeCurrentNetworkStatus(status.connected);
         });
-        this.changeCurrentNetworkStatus(Network.getStatus().then(status => {
-            return status.connected;
-        }), true);
+        Network.getStatus()
+            .then(status => {
+                this.changeCurrentNetworkStatus(status.connected, true);
+            })
+            .catch(() => this.changeCurrentNetworkStatus(false, true));
     }
 
-    changeCurrentNetworkStatus(newNetworkStatus, init = false) {
+    changeCurrentNetworkStatus(newNetworkStatus: boolean, init = false) {
         if (NetworkService.networkAvailable != newNetworkStatus) {
             NetworkService.networkAvailable = newNetworkStatus;
             eventBus.emit(NetworkCommands.NETWORK_CHANGE, newNetworkStatus);
