@@ -1,16 +1,22 @@
 import {supabase} from "@/config/supabaseClientConfig";
 import {Article} from "@/models/Article";
+import {getOfflineData, handleFetchResult} from "@/utils/DataServiceUtils";
+import {NetworkService} from "@/services/NetworkService";
 
-export class ArticleService{
+export class ArticleService {
     TABLE_NAME = "Article"
 
     constructor() {
     }
 
     async getListArticle(listId: number): Article[] {
+        const storageKey = `LIST_ARTICLES_${listId}`
 
+        if (!NetworkService.networkAvailable) {
+            return await getOfflineData(storageKey);
+        }
 
-        const {data: lists, status, error} = await supabase
+        const result = await supabase
             .from(this.TABLE_NAME)
             .select(`id,
                 created_at,
@@ -26,15 +32,14 @@ export class ArticleService{
             .eq('list', listId)
             .order("label")
 
-        if (status == 200) return lists
-        else throw error
+        return handleFetchResult(result, storageKey);
     }
 
 
     async createArticle(name: string, unity: number, unity_value: number, list: number, label: number) {
         const user = await supabase.auth.getUser()
 
-        const { error } = await supabase
+        const {error} = await supabase
             .from('Article')
             .insert([{
                 name: name,
@@ -51,7 +56,7 @@ export class ArticleService{
     }
 
     async deleteArticles(ids: number[]) {
-        const { error } = await supabase
+        const {error} = await supabase
             .from('Article')
             .update({deleted: true, deleted_at: new Date().toISOString()})
             //géré dans le back pour être vraiment supprimé après 24h

@@ -36,6 +36,7 @@ import {ErrorHandlerService} from "@/handler/ErrorHandler";
 import {Keyboard, KeyboardResize, KeyboardStyle} from "@capacitor/keyboard";
 import {Capacitor} from "@capacitor/core";
 import {NetworkService} from "@/services/NetworkService";
+import {AppStorageService} from "@/services/AppStorageService";
 
 export const app = createApp(App)
     .use(IonicVue)
@@ -48,6 +49,7 @@ router.isReady().then(() => {
 
 const errorHandlerService = new ErrorHandlerService(router);
 const networkService = new NetworkService();
+AppStorageService.getInstance().openStorage();
 
 if (Capacitor.getPlatform() === 'ios') {
 

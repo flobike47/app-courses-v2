@@ -48,9 +48,9 @@ async function signOut() {
   const {error} = await supabase.auth.signOut();
   if (error) {
     console.error('Erreur lors de la déconnexion:', error);
-    supabase.auth.setSession(null);
+    await supabase.auth.setSession(null);
   }
-  router.push('/login');
+  await router.push('/login');
 
 }
 

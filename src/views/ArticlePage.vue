@@ -69,6 +69,7 @@ import {AppStorageService} from "@/services/AppStorageService";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 import AppHeader from "@/components/Header/AppHeader.vue";
+import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 
 const route = useRoute();
 const service = new ArticleService();
@@ -126,7 +127,7 @@ const fetchArticles = async () => {
     isLoading.value = true;
     allArticles.value = await service.getListArticle(listId);
 
-    const selectedIds = await storageService.getSavedArticles(listId) ?? []
+    const selectedIds = await storageService.getSelectedArticles(listId) ?? []
 
     allArticles.value = allArticles.value.map(article => ({
       ...article,
@@ -136,6 +137,7 @@ const fetchArticles = async () => {
 
     applyFilterArticles();
   } catch (error) {
+    console.error("Erreur lors de la récupération des articles:", error);
     eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.RETRIEVE_ARTICLES))
   } finally {
     isLoading.value = false;
@@ -151,12 +153,11 @@ const handleArticleSelection = (article: Article) => {
   }
 
   const selectedIds = selectedArticles.value.map(a => a.id);
-  storageService.setSavedArticles(listId, selectedIds)
+  storageService.setSelectedArticles(listId, selectedIds)
 };
 
-const deleteSelectedArticles = async () => {
-  if (!selectedArticles.value.length) return;
-
+async function deleteArticles(toDelete: boolean) {
+  if (!toDelete) return;
   try {
     isLoading.value = true;
     const idsToDelete = selectedArticles.value.map(article => article.id);
@@ -165,12 +166,26 @@ const deleteSelectedArticles = async () => {
     await fetchArticles();
 
     selectedArticles.value = [];
-    await storageService.removeSavedArticles(listId)
+    await storageService.removeSelectedArticles(listId)
   } catch (error) {
     console.error("Erreur lors de la suppression des articles:", error);
   } finally {
     isLoading.value = false;
   }
+}
+
+const deleteSelectedArticles = async () => {
+  if (!selectedArticles.value.length) return;
+
+  const instruction = {
+    message: `Êtes-vous sûr de vouloir supprimer les ${selectedArticles.value.length} articles sélectionnés ?`,
+    eventCallback: ArticleCommands.DELETE_ARTICLES,
+  };
+
+  eventBus.emit(AlertCommands.DELETION, instruction);
+
+  eventBus.on(ArticleCommands.DELETE_ARTICLES, deleteArticles)
+
 };
 
 </script>

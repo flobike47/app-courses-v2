@@ -12,23 +12,24 @@ import {
 } from "@ionic/vue";
 import NetworkToolBarStatus from "@/components/Header/NetworkToolBarStatus.vue";
 
-defineProps<{
-  title: string,
-  canBack?: boolean,
-  option?: Array<ionButton>,
-  isLoading?: boolean
-  returnPath?: string
-
-}>();
-
+withDefaults(defineProps<{
+  title: string;
+  canBack?: boolean;
+  option?: Array<IonButton>;
+  isLoading?: boolean;
+  returnPath?: string;
+}>(), {
+  canBack: true,
+  returnPath: '/tabs/home'
+});
 
 </script>
 
 <template>
   <ion-header>
     <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button default-href="{{returnPath ?? '/tabs/home'}}"></ion-back-button>
+      <ion-buttons v-if="canBack" slot="start">
+        <ion-back-button :default-href="returnPath"></ion-back-button>
       </ion-buttons>
       <ion-title>{{ title }}</ion-title>
       <ion-progress-bar v-if="isLoading" type="indeterminate"></ion-progress-bar>

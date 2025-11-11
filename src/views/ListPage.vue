@@ -14,6 +14,7 @@
                           }
                         ]"
                :title="'Mes listes'"
+               :can-back="false"
     />
     <ion-content :fullscreen="true">
       <ion-refresher slot="fixed" @ionRefresh="handleRefresh($event)">
@@ -79,6 +80,7 @@ const fetchLists = async () => {
     isLoading.value = true;
     lists.value = await service.getCircleLists();
   } catch (error) {
+    console.log(error);
     eventBus.emit(ErrorCommands.ERROR, new Error(ErrorsUtils.RETRIEVE_LISTS))
   } finally {
     isLoading.value = false;

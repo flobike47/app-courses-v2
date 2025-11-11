@@ -7,10 +7,21 @@ import {AlertInstruction} from "@/models/AlertInstruction";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import {AlertShareCircleInstruction} from "@/models/AlertShareCircleInstruction";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
+import {NetworkService} from "@/services/NetworkService";
 
 
 async function showDeletionAlert(instructions: AlertInstruction) {
   await Haptics.impact({style: NotificationType.Warning});
+
+  if (!NetworkService.networkAvailable) {
+    const toast = await alertController.create({
+      header: 'Erreur de suppression',
+      message: 'Vous devez être en ligne pour supprimer cet élément.',
+      buttons: alertButtonsOffline(instructions.eventCallback),
+    });
+    await toast.present();
+    return;
+  }
   const alert = await alertController.create({
     header: 'Confirmation de suppression',
     message: instructions.message,
@@ -37,6 +48,19 @@ function alertButtons(busEventCallBack: string) {
         eventBus.emit(busEventCallBack, true)
       },
     },
+  ];
+}
+
+function alertButtonsOffline(busEventCallBack: string) {
+
+  return [
+    {
+      text: 'OK',
+      role: 'cancel',
+      handler: () => {
+        eventBus.emit(busEventCallBack, false)
+      },
+    }
   ];
 }
 
