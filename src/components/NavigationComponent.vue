@@ -36,7 +36,7 @@ import {HapticService} from "@/services/HapticService";
 
 const route = useRoute();
 const currentLabel = ref('Ajouter une liste');
-const storageService = AppStorageService.getInstance();
+const storageService = AppStorageService;
 
 
 onMounted(async () => {

@@ -3,55 +3,72 @@ import {supabase} from "@/config/supabaseClientConfig";
 import {UserService} from "@/services/UserService";
 import {NetworkService} from "@/services/NetworkService";
 import {getOfflineData, handleFetchResult} from "@/utils/DataServiceUtils";
+import {QueueItem} from "@/models/QueueItem";
+import {OfflineQueueService} from "@/services/OfflineQueueService";
 
-export class ListService {
 
-    TABLE_NAME = "List"
+const TABLE_NAME = "List"
 
-    userService = new UserService()
+const userService = UserService
 
-    constructor() {
+
+const getCircleLists = async (): List[] => {
+    const storageKey = "CIRCLE_LISTS"
+
+    if (!NetworkService.networkAvailable) {
+        return await getOfflineData(storageKey);
     }
 
-    async getCircleLists(): List[] {
-        const storageKey = "CIRCLE_LISTS"
+    const user = await userService.getUserInDB()
+    const result = await supabase
+        .from(TABLE_NAME)
+        .select()
+        .eq('circle', user.circle.id)
 
-        if (!NetworkService.networkAvailable) {
-            return await getOfflineData(storageKey);
-        }
+    return handleFetchResult(result, storageKey);
+}
 
-        const user = await this.userService.getUserInDB()
-        const result = await supabase
-            .from(this.TABLE_NAME)
-            .select()
-            .eq('circle', user.circle.id)
+const createList = async (list: List): Promise<number> => {
 
-        return handleFetchResult(result, storageKey);
+    if (!NetworkService.networkAvailable) {
+
+        const offlineArticle = new QueueItem(list, "LIST");
+        await OfflineQueueService.saveToOfflineQueue(offlineArticle);
+        return true;
     }
 
-    async createList(list: List): boolean {
-        const user = await this.userService.getUserInDB()
-        list.circle = user.circle.id
-        const {status, error} = await supabase.from(this.TABLE_NAME).insert(list)
-        if (status == 201) {
-            return true
-        } else {
-            throw error
-        }
 
-    }
+    const user = await userService.getUserInDB()
+    list.circle = user.circle.id
+    const {status, data: listPersisted, error} = await supabase
+        .from(TABLE_NAME)
+        .insert(list)
+        .select()
+        .single()
 
-    async deleteList(id: number): boolean {
-        const {error, status} = await supabase
-            .from('List')
-            .delete()
-            .eq('id', id)
-
-        if (status == 204) {
-            return true
-        } else {
-            throw error
-        }
+    if (status == 201) {
+        return listPersisted.id
+    } else {
+        throw error
     }
 
 }
+
+const deleteList = async (id: number): Promise<boolean> => {
+    const {error, status} = await supabase
+        .from('List')
+        .delete()
+        .eq('id', id)
+
+    if (status == 204) {
+        return true
+    } else {
+        throw error
+    }
+}
+
+export const ListService = {
+    getCircleLists,
+    createList,
+    deleteList
+};

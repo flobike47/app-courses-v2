@@ -59,7 +59,6 @@ const formData = ref({
 });
 
 const router = useRouter();
-const circleService = new CircleService()
 const isLoadingCreate = ref(false);
 const isLoadingJoin = ref(false);
 const canBack = ref(false);
@@ -90,7 +89,7 @@ async function joinAfterAlert(alertResponse: CircleAlertInput){
     return
   }
   try {
-    await circleService.joinCircle(formData.value.name, alertResponse.circlePrivateCode)
+    await CircleService.joinCircle(formData.value.name, alertResponse.circlePrivateCode)
     await router.push('/')
   }catch (error){
     eventBus.emit(ErrorCommands.ERROR,error)
@@ -105,8 +104,8 @@ async function createAndJoin() {
   HapticService.selectingHaptic()
   let circle = new Circle(formData.value.name)
   try {
-    circle = await circleService.createCircle(circle)
-    await circleService.joinCircle(formData.value.name, circle.private_code)
+    circle = await CircleService.createCircle(circle)
+    await CircleService.joinCircle(formData.value.name, circle.private_code)
 
     await router.push('/')
 
@@ -121,14 +120,14 @@ async function createAndJoin() {
 }
 
 onMounted(async () => {
-  const circle = await circleService.getUserCircle()
+  const circle = await CircleService.getUserCircle()
   if (circle) {
     canBack.value = true
   }
 })
 
 onUpdated(async () => {
-  const circle = await circleService.getUserCircle()
+  const circle = await CircleService.getUserCircle()
   if (circle) {
     canBack.value = true
   }

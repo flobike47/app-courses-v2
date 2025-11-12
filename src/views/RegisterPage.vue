@@ -48,7 +48,7 @@ const formData = ref({
 });
 
 const router = useRouter();
-const userService = new UserService()
+const userService = UserService
 const isLoading = ref(false);
 
 const isFormValid = computed(() => {

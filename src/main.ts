@@ -37,6 +37,7 @@ import {Keyboard, KeyboardResize, KeyboardStyle} from "@capacitor/keyboard";
 import {Capacitor} from "@capacitor/core";
 import {NetworkService} from "@/services/NetworkService";
 import {AppStorageService} from "@/services/AppStorageService";
+import {OfflineQueueService, openOfflineQueue} from "@/services/OfflineQueueService";
 
 export const app = createApp(App)
     .use(IonicVue)
@@ -47,9 +48,10 @@ router.isReady().then(() => {
     console.log("Configuring keyboard for iOS");
 });
 
-const errorHandlerService = new ErrorHandlerService(router);
-const networkService = new NetworkService();
-AppStorageService.getInstance().openStorage();
+ErrorHandlerService.initializeGlobalHandlers()
+NetworkService.openNetworkListener();
+AppStorageService.openStorage();
+OfflineQueueService.openOfflineQueue();
 
 if (Capacitor.getPlatform() === 'ios') {
 

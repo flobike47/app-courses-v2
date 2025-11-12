@@ -29,14 +29,12 @@ import {supabase} from "@/config/supabaseClientConfig";
 import AppHeader from "@/components/Header/AppHeader.vue";
 
 const paletteToggle = ref(false);
-const storageService = AppStorageService.getInstance();
-
 
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 
 const toggleDarkPalette = (shouldAdd: boolean) => {
   document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
-  storageService.setDarkMode(shouldAdd)
+  AppStorageService.setDarkMode(shouldAdd)
 };
 
 const initializeDarkPalette = (isDark: boolean) => {
@@ -55,7 +53,7 @@ async function signOut() {
 }
 
 onMounted(async () => {
-  const savedDarkMode = await storageService.getDarkMode()
+  const savedDarkMode = await AppStorageService.getDarkMode()
 
   if (savedDarkMode !== null) {
     const isDark = JSON.parse(savedDarkMode);

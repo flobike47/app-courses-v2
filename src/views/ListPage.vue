@@ -54,15 +54,13 @@ import ListCard from "@/components/List/ListCard.vue";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
-import {enterOutline, shareOutline} from "ionicons/icons";
 import {CircleService} from "@/services/CircleService";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import router from "@/router";
 import {AlertShareCircleInstruction} from "@/models/AlertShareCircleInstruction";
 import AppHeader from "@/components/Header/AppHeader.vue";
 
-const service = new ListService()
-const circleService = new CircleService()
+const service = ListService
 
 const lists = ref<List[] | null>(null);
 const isLoading = ref(true);
@@ -98,7 +96,7 @@ async function join(){
 
 async function share(){
   const instruction = new AlertShareCircleInstruction("",null);
-  instruction.circle = await circleService.getUserCircle()
+  instruction.circle = await CircleService.getUserCircle()
   eventBus.emit(AlertCommands.CIRCLE_SHARE, instruction)
 }
 

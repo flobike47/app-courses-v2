@@ -62,7 +62,7 @@ import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
 import eventBus from "@/services/EventBus";
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
-import {ellipsisVertical, trash} from "ionicons/icons";
+import {trash} from "ionicons/icons";
 import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 import {Article} from "@/models/Article";
 import {AppStorageService} from "@/services/AppStorageService";
@@ -72,8 +72,7 @@ import AppHeader from "@/components/Header/AppHeader.vue";
 import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 
 const route = useRoute();
-const service = new ArticleService();
-const storageService = AppStorageService.getInstance()
+const storageService = AppStorageService;
 
 const isLoading = ref(false);
 
@@ -125,7 +124,7 @@ onUnmounted(() => {
 const fetchArticles = async () => {
   try {
     isLoading.value = true;
-    allArticles.value = await service.getListArticle(listId);
+    allArticles.value = await ArticleService.getListArticle(listId);
 
     const selectedIds = await storageService.getSelectedArticles(listId) ?? []
 
@@ -161,7 +160,7 @@ async function deleteArticles(toDelete: boolean) {
   try {
     isLoading.value = true;
     const idsToDelete = selectedArticles.value.map(article => article.id);
-    await service.deleteArticles(idsToDelete);
+    await ArticleService.deleteArticles(idsToDelete);
 
     await fetchArticles();
 

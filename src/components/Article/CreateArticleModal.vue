@@ -91,16 +91,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonModal,
-  IonContent,
-  IonList,
-  IonItem,
-  IonInput,
-  IonButton,
-  IonSpinner
-} from '@ionic/vue';
-import {onMounted, onUnmounted, ref, computed, onUpdated} from 'vue';
+import {IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonSpinner} from '@ionic/vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
 import eventBus from "@/services/EventBus";
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
 import {ArticleService} from "@/services/ArticleService";
@@ -108,10 +100,6 @@ import {LabelService} from "@/services/LabelService";
 import {UnityService} from "@/services/UnityService";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
-
-const service = new ArticleService();
-const labelService = new LabelService();
-const unityService = new UnityService();
 
 let listId = null
 
@@ -144,7 +132,7 @@ const selectLabel = (labelId) => {
 
 async function fetchUnities() {
   try {
-    unities.value = await unityService.getUnities()
+    unities.value = await UnityService.getUnities()
   } catch (error) {
     modal.value.$el.dismiss()
     eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.RETRIEVE_UNITIES))
@@ -153,7 +141,7 @@ async function fetchUnities() {
 
 async function fetchLabels() {
   try {
-    labels.value = await labelService.getLabels()
+    labels.value = await LabelService.getLabels()
   } catch (error) {
     modal.value.$el.dismiss()
     eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.RETRIEVE_LABELS))
@@ -163,7 +151,7 @@ async function fetchLabels() {
 const createArticle = async () => {
   isLoading.value = true
   try {
-    await service.createArticle(
+    await ArticleService.createArticle(
         formData.value.name,
         formData.value.unity,
         formData.value.unity_value,
@@ -174,6 +162,7 @@ const createArticle = async () => {
     resetModal()
     eventBus.emit(ArticleCommands.RELOAD(listId))
   } catch (error) {
+    console.log(error)
     eventBus.emit(ErrorCommands.ERROR,  new Error(ErrorsUtils.CREATION))
   } finally {
     isLoading.value = false

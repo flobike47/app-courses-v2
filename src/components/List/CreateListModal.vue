@@ -58,25 +58,17 @@
 </template>
 
 <script setup lang="ts">
-import {
-  IonModal,
-  IonContent,
-  IonList,
-  IonItem,
-  IonInput,
-  IonButton,
-  IonSpinner
-} from '@ionic/vue';
-import { onMounted, onUnmounted, ref, computed } from 'vue';
-import { ListService } from '@/services/ListService';
-import { List } from "@/models/List";
+import {IonButton, IonContent, IonInput, IonItem, IonList, IonModal, IonSpinner} from '@ionic/vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {ListService} from '@/services/ListService';
+import {List} from "@/models/List";
 import eventBus from "@/services/EventBus";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import {Haptics, ImpactStyle} from "@capacitor/haptics";
 import {ListCommands} from "@/models/eventCommand/ListCommands";
 import {ErrorsUtils} from "@/models/ErrorsUtils";
 import {ErrorCommands} from "@/models/eventCommand/ErrorCommands";
 
-const service = new ListService();
+const service = ListService
 const modal = ref();
 const isLoading = ref(false);
 const pastelColors = ref<string[]>([]);

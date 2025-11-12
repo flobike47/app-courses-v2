@@ -36,7 +36,7 @@ const props = defineProps<{
   list: List
 }>();
 
-const service = new ListService()
+const service = ListService
 
 
 function navigateToListArticles() {

@@ -10,8 +10,6 @@ import {NetworkService} from "@/services/NetworkService";
 import eventBus from "@/services/EventBus";
 import {StorageCommands} from "@/models/eventCommand/StorageCommands";
 
-const userService = new UserService()
-const circleService = new CircleService()
 const routes: Array<RouteRecordRaw> = [
 
   {
@@ -65,13 +63,13 @@ const router = createRouter({
 async function beforeEach(to, from, next)  {
 
   const {data: { session },
-  } = await userService.getUserSession()
+  } = await UserService.getUserSession()
 
   if (!session ) {
     return next('/login')
   }else {
       if (NetworkService.networkAvailable) {
-          await userService.finishGoogleLogin(session)
+          await UserService.finishGoogleLogin(session)
       }
     next()
   }
@@ -98,7 +96,7 @@ async function beforeHome(to, from, next) {
 }
 
 async function setUserCircleLoadedInStorage(storageKey: string) {
-    const circle = await circleService.getUserCircle()
+    const circle = await CircleService.getUserCircle()
     if (circle) {
         await eventBus.emit(StorageCommands.OFFLINE_SAVE, {key: storageKey, value: true})
     }

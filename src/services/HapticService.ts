@@ -1,8 +1,8 @@
 import {Haptics, ImpactStyle} from "@capacitor/haptics";
 
-export class HapticService {
 
-    static async selectingHaptic() {
-        await Haptics.impact({style: ImpactStyle.Light});
-    }
+const selectingHaptic = async () => {
+    await Haptics.impact({style: ImpactStyle.Light});
 }
+
+export const HapticService = {selectingHaptic};
