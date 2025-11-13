@@ -19,7 +19,7 @@ withDefaults(defineProps<{
   isLoading?: boolean;
   returnPath?: string;
 }>(), {
-  canBack: true,
+  canBack: false,
   returnPath: '/tabs/home'
 });
 

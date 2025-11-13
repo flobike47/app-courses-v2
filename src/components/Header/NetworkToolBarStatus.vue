@@ -8,13 +8,10 @@ import {cloudOfflineOutline} from "ionicons/icons";
 const isOnline = ref(NetworkService.networkAvailable);
 
 onMounted(() => {
-  eventBus.on(NetworkCommands.NETWORK_CHANGE, () => {
-    isOnline.value = NetworkService.networkAvailable
+  isOnline.value = NetworkService.networkAvailable;
+  eventBus.on(NetworkCommands.NETWORK_CHANGE, (newStatus) => {
+    isOnline.value = newStatus
   });
-});
-
-onUnmounted(() => {
-  eventBus.off(NetworkCommands.NETWORK_CHANGE);
 });
 
 

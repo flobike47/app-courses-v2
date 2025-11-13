@@ -59,6 +59,7 @@ import {AlertCommands} from "@/models/eventCommand/AlertCommands";
 import router from "@/router";
 import {AlertShareCircleInstruction} from "@/models/AlertShareCircleInstruction";
 import AppHeader from "@/components/Header/AppHeader.vue";
+import {enterOutline, shareOutline} from 'ionicons/icons';
 
 const service = ListService
 

@@ -9,6 +9,7 @@
                           }
                         ]"
                :title="listName"
+               :can-back="true"
     />
     <ion-content>
       <div v-if="!isLoading">
@@ -62,7 +63,7 @@ import {ArticleService} from "@/services/ArticleService";
 import ArticleCard from "@/components/Article/ArticleCard.vue";
 import eventBus from "@/services/EventBus";
 import {ArticleCommands} from "@/models/eventCommand/ArticleCommands";
-import {trash} from "ionicons/icons";
+import {trash, ellipsisVertical} from "ionicons/icons";
 import PopoverComponent from "@/components/Article/PopoverComponent.vue";
 import {Article} from "@/models/Article";
 import {AppStorageService} from "@/services/AppStorageService";
